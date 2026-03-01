@@ -122,7 +122,7 @@ kill %1                                     # Stop background server
 # Update "Review Notes" section with observations:
 # - What went smoothly? (e.g., generators auto-configured everything)
 # - What was unexpected? (e.g., E2E app generated automatically)
-# - Improvements? (e.g., use `npx nx` instead of `npm exec nx`)
+# - Improvements? (e.g., preferred command patterns identified)
 ```
 
 Commit (include todos.md with review notes):
@@ -214,7 +214,7 @@ Verify:
 ```sh
 grep -q '"module": "esnext"' apps/storefront/tsconfig.json && echo "✓ module set to esnext"
 grep -q '"moduleResolution": "bundler"' apps/storefront/tsconfig.json && echo "✓ moduleResolution set to bundler"
-npm exec nx typecheck storefront           # TypeScript compiles
+npx nx typecheck storefront           # TypeScript compiles
 ```
 
 Commit:
@@ -255,7 +255,7 @@ test -f apps/storefront/components.json && echo "✓ components.json created"
 test -f apps/storefront/lib/utils.ts && echo "✓ lib/utils.ts created"
 test -f apps/storefront/components/ui/button.tsx && echo "✓ Button component added"
 grep -q "from.*@/components/ui/button" apps/storefront/app/page.tsx && echo "✓ Button imported in page.tsx"
-npm exec nx build storefront                # Build succeeds with Shadcn
+npx nx build storefront                # Build succeeds with Shadcn
 ```
 
 Commit:
@@ -275,8 +275,8 @@ Use Node's built-in `node:test` runner (no new framework needed). Test cases:
 1. App directory and key files exist (`app/page.tsx`, `next.config.js`, `tailwind.config.js`)
 2. `globals.css` contains `@tailwind` directives
 3. `components.json` and `components/ui/button.tsx` exist
-4. TypeScript compiles: `npm exec nx typecheck storefront`
-5. Build succeeds: `npm exec nx build storefront`
+4. TypeScript compiles: `npx nx typecheck storefront`
+5. Build succeeds: `npx nx build storefront`
 
 Run with:
 ```sh
@@ -359,7 +359,7 @@ test -d apps/storefront-e2e && echo "✓ E2E app directory created"
 test -f apps/storefront-e2e/playwright.config.ts && echo "✓ Playwright config exists"
 test -f apps/storefront-e2e/e2e/app.spec.ts && echo "✓ E2E test specs created"
 grep -q "baseUrl" apps/storefront-e2e/playwright.config.ts && echo "✓ baseUrl configured"
-npm exec nx e2e storefront-e2e              # Run e2e tests (with dev server running)
+npx nx e2e storefront-e2e              # Run e2e tests (with dev server running)
 ```
 
 Commit:
@@ -391,12 +391,12 @@ git commit -m "✅ test: add playwright e2e tests with comprehensive scenarios"
 
 ```sh
 # Unit tests
-npm exec nx typecheck storefront   # TypeScript passes
-npm exec nx build storefront       # Build succeeds
-npm exec nx serve storefront       # Dev server starts (in background for e2e)
+npx nx typecheck storefront   # TypeScript passes
+npx nx build storefront       # Build succeeds
+npx nx serve storefront       # Dev server starts (in background for e2e)
 node --experimental-strip-types --test tests/nextjs-app-tailwind-shadcn/setup.test.ts
 
 # E2E tests
-npm exec nx e2e storefront-e2e     # Run Playwright e2e tests
-npm exec nx e2e storefront-e2e --ui # Run with Playwright UI
+npx nx e2e storefront-e2e     # Run Playwright e2e tests
+npx nx e2e storefront-e2e --ui # Run with Playwright UI
 ```
