@@ -29,6 +29,10 @@
     "app/**/*.tsx",
     "app/**/*.js",
     "app/**/*.jsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
     "../../apps/storefront/.next/types/**/*.ts",
     "../../dist/apps/storefront/.next/types/**/*.ts",
     "next-env.d.ts"

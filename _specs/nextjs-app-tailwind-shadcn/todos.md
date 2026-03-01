@@ -30,11 +30,11 @@
 - [x] Update `apps/storefront/app/page.tsx` to import and render Button component
 
 ## Unit Tests
-- [ ] Create `tests/nextjs-app-tailwind-shadcn/setup.test.ts`
-- [ ] Write tests for file existence (app/page.tsx, config files, components)
-- [ ] Write tests for Tailwind directives in globals.css
-- [ ] Write tests for Shadcn components existence
-- [ ] Run unit tests and verify they pass
+- [x] Create `tests/nextjs-app-tailwind-shadcn/setup.test.ts`
+- [x] Write tests for file existence (app/page.tsx, config files, components)
+- [x] Write tests for Tailwind directives in global.css
+- [x] Write tests for Shadcn components existence
+- [x] Run unit tests and verify they pass (10/10 tests pass)
 
 ## Playwright E2E Setup
 - [x] Generate Playwright e2e app: `npx nx generate @nx/playwright:configuration --project=storefront --directory=apps/storefront-e2e --baseUrl=http://localhost:3000`
@@ -113,3 +113,12 @@ _Observations from implementation:_
 - ✓ Path alias @/* already configured and working
 - ✓ TypeScript compilation successful (npx tsc --noEmit passes)
 - ✓ No manual configuration needed - generator handles all requirements
+
+## Checkpoint 6 Notes
+- ✓ Created unit test suite using Node.js built-in `node:test` runner
+- ✓ Test coverage: file existence, Tailwind directives, Shadcn components, TypeScript compilation, build success
+- ✓ All 10 tests pass (2/2 async checks included)
+- ✓ Fixed tsconfig.json to include components/ and lib/ directories (required for TypeScript)
+- ✓ Used `tsc --noEmit` for TypeScript verification (no nx typecheck task available)
+- ✓ Build test verifies .next output directory was created successfully
+- ✓ Run command: `node --experimental-strip-types --test tests/nextjs-app-tailwind-shadcn/setup.test.ts`
