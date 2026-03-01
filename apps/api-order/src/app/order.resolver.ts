@@ -59,7 +59,7 @@ export class OrderResolver {
   @UseGuards(JwtAuthGuard)
   async updateOrderStatus(
     @Args('orderId') orderId: string,
-    @Args('status') status: OrderStatus
+    @Args('status', { type: () => OrderStatus }) status: OrderStatus
   ): Promise<Order | null> {
     return this.orderService.updateOrderStatus(orderId, status);
   }

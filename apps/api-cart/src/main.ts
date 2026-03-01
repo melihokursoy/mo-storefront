@@ -9,13 +9,9 @@ import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'graphql';
-  app.setGlobalPrefix(globalPrefix);
   const port = process.env.PORT || 3302;
   await app.listen(port);
-  Logger.log(
-    `🚀 Cart Subgraph running on: http://localhost:${port}/${globalPrefix}`
-  );
+  Logger.log(`🚀 Cart Subgraph running on: http://localhost:${port}/graphql`);
 }
 
 bootstrap();

@@ -1,4 +1,11 @@
-import { ObjectType, Field, ID, Float, Directive } from '@nestjs/graphql';
+import {
+  ObjectType,
+  Field,
+  ID,
+  Float,
+  Directive,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 export enum OrderStatus {
   PENDING = 'PENDING',
@@ -9,30 +16,29 @@ export enum OrderStatus {
   CANCELLED = 'CANCELLED',
 }
 
-// External references to Product and Cart from their subgraphs
+registerEnumType(OrderStatus, {
+  name: 'OrderStatus',
+});
+
+// References to Product and Cart from their subgraphs (nested in OrderItem)
 @ObjectType()
-@Directive('@external')
-export class ExternalProduct {
+export class OrderProduct {
   @Field(() => ID)
   id!: string;
 
   @Field()
-  @Directive('@external')
   name!: string;
 
   @Field(() => Float)
-  @Directive('@external')
   price!: number;
 }
 
 @ObjectType()
-@Directive('@external')
-export class ExternalCart {
+export class OrderCart {
   @Field(() => ID)
   id!: string;
 
   @Field()
-  @Directive('@external')
   userId!: string;
 }
 
@@ -41,8 +47,8 @@ export class OrderItem {
   @Field(() => ID)
   id!: string;
 
-  @Field(() => ExternalProduct)
-  product!: ExternalProduct;
+  @Field(() => OrderProduct)
+  product!: OrderProduct;
 
   @Field()
   quantity!: number;
@@ -63,13 +69,13 @@ export class Order {
   @Field()
   userId!: string;
 
-  @Field(() => ExternalCart, { nullable: true })
-  cart?: ExternalCart;
+  @Field(() => OrderCart, { nullable: true })
+  cart?: OrderCart;
 
   @Field(() => [OrderItem])
   items!: OrderItem[];
 
-  @Field()
+  @Field(() => OrderStatus)
   status!: OrderStatus;
 
   @Field(() => Float)

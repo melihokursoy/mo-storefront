@@ -129,8 +129,10 @@ mo-storefront/
 3. **Implement by checkpoint**:
 
    - Work through plan sequentially
-   - After each checkpoint: mark todos complete, add notes, commit
+   - write tests first then implement te code
+   - write required tests within that checkpoint
    - Update todos.md review section with observations
+   - After each checkpoint: mark todos complete, add notes, commit with custom commit command
 
 4. **Verify before "done"**:
    - Run tests, build, typecheck

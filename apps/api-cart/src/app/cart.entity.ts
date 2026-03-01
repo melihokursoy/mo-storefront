@@ -1,18 +1,15 @@
 import { ObjectType, Field, ID, Float, Directive } from '@nestjs/graphql';
 
-// External reference to Product from Product subgraph
+// Reference to Product from Product subgraph (nested in CartItem)
 @ObjectType()
-@Directive('@external')
-export class ExternalProduct {
+export class CartProduct {
   @Field(() => ID)
   id!: string;
 
   @Field()
-  @Directive('@external')
   name!: string;
 
   @Field(() => Float)
-  @Directive('@external')
   price!: number;
 }
 
@@ -21,8 +18,8 @@ export class CartItem {
   @Field(() => ID)
   id!: string;
 
-  @Field(() => ExternalProduct)
-  product!: ExternalProduct;
+  @Field(() => CartProduct)
+  product!: CartProduct;
 
   @Field()
   quantity!: number;

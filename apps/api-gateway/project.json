@@ -1,0 +1,7 @@
+{
+  "projectType": "application",
+  "sourceRoot": "apps/api-gateway/src",
+  "prefix": "org",
+  "targets": {},
+  "implicitDependencies": ["api-product", "api-cart", "api-order"]
+}

@@ -32,6 +32,9 @@
     },
     {
       "path": "./apps/api-order"
+    },
+    {
+      "path": "./packages/graphql-complexity"
     }
   ]
 }

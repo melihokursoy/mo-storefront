@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloGatewayDriver, ApolloGatewayDriverConfig } from '@nestjs/apollo';
+import {
+  createComplexityPlugin,
+  GATEWAY_COMPLEXITY_CONFIG,
+} from '@org/graphql-complexity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -16,6 +20,7 @@ import { AppService } from './app.service';
             { name: 'order', url: 'http://localhost:3303/graphql' },
           ],
           pollIntervalInMs: 10000,
+          subgraphHealthCheck: true,
         }),
       },
       server: {
@@ -25,6 +30,11 @@ import { AppService } from './app.service';
           token: req.headers.authorization?.replace('Bearer ', ''),
           userId: (req as any).user?.userId,
         }),
+        plugins: [
+          createComplexityPlugin({
+            config: GATEWAY_COMPLEXITY_CONFIG,
+          }),
+        ],
       },
     }),
   ],

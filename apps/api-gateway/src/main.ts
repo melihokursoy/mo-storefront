@@ -18,13 +18,9 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
-  const globalPrefix = 'graphql';
-  app.setGlobalPrefix(globalPrefix);
   const port = process.env.PORT || 3300;
   await app.listen(port);
-  Logger.log(
-    `🚀 Apollo Gateway running on: http://localhost:${port}/${globalPrefix}`
-  );
+  Logger.log(`🚀 Apollo Gateway running on: http://localhost:${port}/graphql`);
 }
 
 bootstrap();

@@ -6,6 +6,10 @@ import {
 } from '@nestjs/apollo';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import {
+  createComplexityPlugin,
+  SUBGRAPH_COMPLEXITY_CONFIG,
+} from '@org/graphql-complexity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OrderResolver } from './order.resolver';
@@ -24,6 +28,16 @@ import { JwtStrategy } from './auth/jwt.strategy';
       buildSchemaOptions: {
         orphanedTypes: [Order],
       },
+      context: ({ req, res }: { req: any; res: any }) => {
+        // Extract JWT token from Authorization header
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        return { req, res, token };
+      },
+      plugins: [
+        createComplexityPlugin({
+          config: SUBGRAPH_COMPLEXITY_CONFIG,
+        }),
+      ],
     }),
     PassportModule,
     JwtModule.register({
