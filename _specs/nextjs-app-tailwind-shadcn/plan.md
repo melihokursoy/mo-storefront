@@ -32,6 +32,22 @@ Add `"apps/*"` to the workspaces array:
 npm install --save-dev @nx/next
 ```
 
+**✅ Checkpoint 1: Workspace Configuration**
+
+Verify:
+```sh
+git diff package.json          # Check workspaces array updated
+npm list @nx/next              # Confirm @nx/next installed
+```
+
+Commit:
+```sh
+git add package.json package-lock.json
+git commit -m "✨ feat: configure nx workspace and install @nx/next plugin"
+```
+
+---
+
 ### 3. Generate the Next.js App
 
 Check available flags first, then run:
@@ -41,6 +57,23 @@ npm exec nx generate @nx/next:app -- --name=storefront --directory=apps/storefro
 
 - `--no-src` (or `--no-srcDir`) — flat layout, no `src/` folder
 - `--style=css` — Tailwind replaces default styles
+
+**✅ Checkpoint 2: Next.js App Generation**
+
+Verify:
+```sh
+ls -la apps/storefront/                    # App structure created
+cat apps/storefront/next.config.js         # Config file exists
+test ! -d apps/storefront/src && echo "✓ No src folder" || echo "✗ src folder exists"
+```
+
+Commit:
+```sh
+git add apps/storefront/
+git commit -m "✨ feat: generate next.js app with flat directory structure"
+```
+
+---
 
 ### 4. Configure Tailwind CSS
 
@@ -70,6 +103,24 @@ Update `apps/storefront/app/globals.css` to add Tailwind directives at the top:
 @tailwind utilities;
 ```
 
+**✅ Checkpoint 3: Tailwind CSS Configuration**
+
+Verify:
+```sh
+test -f apps/storefront/tailwind.config.js && echo "✓ tailwind.config.js exists"
+test -f apps/storefront/postcss.config.js && echo "✓ postcss.config.js exists"
+grep -q "@tailwind" apps/storefront/app/globals.css && echo "✓ @tailwind directives present"
+npm list tailwindcss postcss autoprefixer  # Confirm dependencies installed
+```
+
+Commit:
+```sh
+git add apps/storefront/tailwind.config.js apps/storefront/postcss.config.js apps/storefront/app/globals.css package-lock.json
+git commit -m "🎨 style: configure tailwind css with post-processing"
+```
+
+---
+
 ### 5. Fix TypeScript Config for Next.js
 
 **File:** `apps/storefront/tsconfig.json`
@@ -86,6 +137,23 @@ Override `module`/`moduleResolution` (base uses `nodenext` which conflicts with 
   }
 }
 ```
+
+**✅ Checkpoint 4: TypeScript Configuration**
+
+Verify:
+```sh
+grep -q '"module": "esnext"' apps/storefront/tsconfig.json && echo "✓ module set to esnext"
+grep -q '"moduleResolution": "bundler"' apps/storefront/tsconfig.json && echo "✓ moduleResolution set to bundler"
+npm exec nx typecheck storefront           # TypeScript compiles
+```
+
+Commit:
+```sh
+git add apps/storefront/tsconfig.json
+git commit -m "🔧 chore: fix typescript config for next.js compatibility"
+```
+
+---
 
 ### 6. Initialize Shadcn UI
 
@@ -109,6 +177,25 @@ npx shadcn@latest add button --cwd=apps/storefront
 
 Import and render `<Button>` from `@/components/ui/button` to confirm end-to-end integration.
 
+**✅ Checkpoint 5: Shadcn UI Integration**
+
+Verify:
+```sh
+test -f apps/storefront/components.json && echo "✓ components.json created"
+test -f apps/storefront/lib/utils.ts && echo "✓ lib/utils.ts created"
+test -f apps/storefront/components/ui/button.tsx && echo "✓ Button component added"
+grep -q "from.*@/components/ui/button" apps/storefront/app/page.tsx && echo "✓ Button imported in page.tsx"
+npm exec nx build storefront                # Build succeeds with Shadcn
+```
+
+Commit:
+```sh
+git add apps/storefront/components.json apps/storefront/lib/utils.ts apps/storefront/components/ui/button.tsx apps/storefront/app/page.tsx
+git commit -m "✨ feat: initialize shadcn ui and integrate button component"
+```
+
+---
+
 ### 8. Write Unit Tests
 
 **File:** `tests/nextjs-app-tailwind-shadcn/setup.test.ts`
@@ -125,6 +212,22 @@ Run with:
 ```sh
 node --experimental-strip-types --test tests/nextjs-app-tailwind-shadcn/setup.test.ts
 ```
+
+**✅ Checkpoint 6: Unit Tests**
+
+Verify:
+```sh
+test -f tests/nextjs-app-tailwind-shadcn/setup.test.ts && echo "✓ Test file created"
+node --experimental-strip-types --test tests/nextjs-app-tailwind-shadcn/setup.test.ts
+```
+
+Commit:
+```sh
+git add tests/nextjs-app-tailwind-shadcn/setup.test.ts
+git commit -m "✅ test: add unit tests for app setup and configuration"
+```
+
+---
 
 ### 9. Install @nx/playwright Plugin
 
@@ -177,6 +280,23 @@ test('button component is interactive', async ({ page }) => {
 **File:** `apps/storefront-e2e/playwright.config.ts`
 
 Ensure it points to `baseUrl: 'http://localhost:3000'` for dev server. The generator should handle this, but verify.
+
+**✅ Checkpoint 7: Playwright E2E Testing**
+
+Verify:
+```sh
+test -d apps/storefront-e2e && echo "✓ E2E app directory created"
+test -f apps/storefront-e2e/playwright.config.ts && echo "✓ Playwright config exists"
+test -f apps/storefront-e2e/e2e/app.spec.ts && echo "✓ E2E test specs created"
+grep -q "baseUrl" apps/storefront-e2e/playwright.config.ts && echo "✓ baseUrl configured"
+npm exec nx e2e storefront-e2e              # Run e2e tests (with dev server running)
+```
+
+Commit:
+```sh
+git add apps/storefront-e2e/
+git commit -m "✅ test: add playwright e2e tests with comprehensive scenarios"
+```
 
 ---
 

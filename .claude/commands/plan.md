@@ -40,7 +40,7 @@ Create a markdown plan document that Plan mode can use directly and save it in t
 
 ## Step 6. Create todos
 
-create checkable todo list in _spec/<<feature_slug>/todos.md 
+create checkable todo list in _spec/<<feature_slug>/todos.md and check what is done during implementation. 
 
 ## Step 7. Final output to the user
 
