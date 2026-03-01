@@ -62,17 +62,39 @@ npx nx generate @nx/next:app --name=storefront --directory=apps/storefront --no-
 
 **✅ Checkpoint 2: Next.js App Generation**
 
-Verify:
+Verify app structure:
 ```sh
 ls -la apps/storefront/                    # App structure created
 cat apps/storefront/next.config.js         # Config file exists
 test ! -d apps/storefront/src && echo "✓ No src folder" || echo "✗ src folder exists"
 ```
 
+Test app in dev mode:
+```sh
+npx nx serve storefront                    # Start dev server on http://localhost:3000
+# Verify page loads in browser or with curl
+curl -s http://localhost:3000 | head -20  # Check HTML response
+# Stop server (Ctrl+C)
+```
+
+Test build:
+```sh
+npx nx build storefront                    # Build for production
+test -d apps/storefront/.next && echo "✓ Build succeeded" || echo "✗ Build failed"
+```
+
+Test E2E (with dev server running in background):
+```sh
+npx nx serve storefront &                  # Start dev server in background
+sleep 3                                     # Wait for server to start
+npx nx e2e storefront-e2e                  # Run Playwright e2e tests
+kill %1                                     # Stop background server
+```
+
 Commit:
 ```sh
-git add apps/storefront/
-git commit -m "✨ feat: generate next.js app with flat directory structure"
+git add apps/storefront/ apps/storefront-e2e/ package.json nx.json tsconfig.json .gitignore .vscode/
+git commit -m "✨ feat: generate next.js app with flat directory structure and e2e tests"
 ```
 
 ---
