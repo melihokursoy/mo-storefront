@@ -46,11 +46,17 @@
 
 # Task Management
 
-1. **Plan First**: Write plan to `_specs/<feature_slug>/todo.md` with checkable items
+1. **Plan First**: Write plan to `_specs/<feature_slug>/plan.md` with checkable items in `_specs/<feature_slug>/todos.md`
 2. **Verify Plan**: Check in before starting implementation
-3. **Track Progress**: Mark items complete as you go
+3. **Track Progress**: Mark items complete as you go in `_specs/<feature_slug>/todos.md`
+   - **🔄 Critical**: After EVERY checkpoint or named section completion:
+     - Update todos.md to mark items as complete with `[x]`
+     - Add brief notes on what was accomplished
+     - Include any unexpected findings or learnings
+   - **📝 Commit Pattern**: Always commit todos.md updates together with implementation changes
+   - **📊 Review Section**: Update "Review Notes" section with observations (went smoothly, unexpected, improvements, performance)
 4. **Explain Changes**: High-level summary at each step
-5. **Document Results**: Add review section to `_specs/<feature_slug>/todo.md`
+5. **Document Results**: Ensure all review observations are captured in todos.md
 6. **Capture Lessons**: Update `.claude/rules/<TOPIC>.md` after corrections
 
 ---
