@@ -26,13 +26,13 @@
 
 ## Phase 2: Gateway Setup
 
-### Checkpoint 5: Apollo Gateway Configured
+### Checkpoint 5: Apollo Gateway Configured ✅ COMPLETE
 
-- [ ] Configure ApolloGatewayDriver in api-gateway app.module.ts
-- [ ] List all subgraph URLs (localhost:3001, 3002, 3003)
-- [ ] Enable introspection for development
-- [ ] Configure CORS for storefront
-- [ ] Test gateway startup
+- [x] Configure ApolloGatewayDriver in api-gateway app.module.ts
+- [x] List all subgraph URLs (localhost:3301, 3302, 3303)
+- [x] Enable introspection for development
+- [x] Configure CORS for storefront
+- [x] Test gateway startup (TypeScript compilation verified)
 
 ## Phase 3: Product Subgraph
 
@@ -239,3 +239,15 @@ _Observations from implementation:_
 - ⚠️ Apollo Server v3 is EOL (use v4/v5 patterns in future updates, currently compatible with NestJS)
 - ✓ All dependencies verified across workspace
 - ✓ Ready to configure Apollo Gateway (Checkpoint 5)
+
+## Checkpoint 5 Notes
+
+- ✓ Configured ApolloGatewayDriver in api-gateway app.module.ts
+- ✓ Set up subgraph URLs: product@localhost:3301, cart@localhost:3302, order@localhost:3303
+- ✓ Enabled IntrospectAndCompose for subgraph discovery (polls every 10 seconds)
+- ✓ Configured CORS for storefront (localhost:3000 and localhost:3100)
+- ✓ Set globalPrefix to 'graphql' (endpoint: http://localhost:3300/graphql)
+- ✓ Updated port to 3300 (gateway port per architecture plan)
+- ✓ TypeScript compilation verified - no errors
+- ✓ Context setup with request object for authentication
+- ✓ Ready to configure Product Subgraph (Checkpoint 6)
