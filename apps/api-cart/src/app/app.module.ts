@@ -4,11 +4,14 @@ import {
   ApolloFederationDriver,
   ApolloFederationDriverConfig,
 } from '@nestjs/apollo';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CartResolver } from './cart.resolver';
 import { CartService } from './cart.service';
 import { Cart } from './cart.entity';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -21,8 +24,13 @@ import { Cart } from './cart.entity';
         orphanedTypes: [Cart],
       },
     }),
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'test-secret-key-change-in-production',
+      signOptions: { expiresIn: '24h' },
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService, CartResolver, CartService],
+  providers: [AppService, CartResolver, CartService, JwtStrategy],
 })
 export class AppModule {}

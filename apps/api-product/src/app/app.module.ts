@@ -4,11 +4,14 @@ import {
   ApolloFederationDriver,
   ApolloFederationDriverConfig,
 } from '@nestjs/apollo';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductResolver } from './product.resolver';
 import { ProductService } from './product.service';
 import { Product } from './product.entity';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -21,8 +24,13 @@ import { Product } from './product.entity';
         orphanedTypes: [Product],
       },
     }),
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'test-secret-key-change-in-production',
+      signOptions: { expiresIn: '24h' },
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService, ProductResolver, ProductService],
+  providers: [AppService, ProductResolver, ProductService, JwtStrategy],
 })
 export class AppModule {}

@@ -6,8 +6,10 @@ import {
   ResolveReference,
   Context,
 } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
 import { Cart } from './cart.entity';
 import { CartService } from './cart.service';
+import { JwtAuthGuard } from './auth/jwt.guard';
 
 interface ContextWithUserId {
   userId?: string;
@@ -25,6 +27,7 @@ export class CartResolver {
   }
 
   @Mutation(() => Cart)
+  @UseGuards(JwtAuthGuard)
   async addToCart(
     @Args('productId') productId: string,
     @Args('quantity') quantity: number,
@@ -43,6 +46,7 @@ export class CartResolver {
   }
 
   @Mutation(() => Cart)
+  @UseGuards(JwtAuthGuard)
   async removeFromCart(
     @Args('cartItemId') cartItemId: string,
     @Context() context: ContextWithUserId
@@ -52,6 +56,7 @@ export class CartResolver {
   }
 
   @Mutation(() => Cart)
+  @UseGuards(JwtAuthGuard)
   async updateCartItem(
     @Args('cartItemId') cartItemId: string,
     @Args('quantity') quantity: number,
@@ -62,6 +67,7 @@ export class CartResolver {
   }
 
   @Mutation(() => Cart)
+  @UseGuards(JwtAuthGuard)
   async clearCart(@Context() context: ContextWithUserId): Promise<Cart> {
     const userId = context.userId || 'user-1';
     return this.cartService.clearCart(userId);

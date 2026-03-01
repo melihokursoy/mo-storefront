@@ -19,7 +19,12 @@ import { AppService } from './app.service';
         }),
       },
       server: {
-        context: ({ req }: { req: any }) => ({ req }),
+        context: ({ req }: { req: any }) => ({
+          req,
+          // Extract JWT token from Authorization header
+          token: req.headers.authorization?.replace('Bearer ', ''),
+          userId: (req as any).user?.userId,
+        }),
       },
     }),
   ],

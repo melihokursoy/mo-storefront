@@ -6,8 +6,10 @@ import {
   ResolveReference,
   Context,
 } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
 import { Order, OrderStatus, OrderItem } from './order.entity';
 import { OrderService } from './order.service';
+import { JwtAuthGuard } from './auth/jwt.guard';
 
 interface ContextWithUserId {
   userId?: string;
@@ -23,15 +25,14 @@ export class OrderResolver {
   }
 
   @Query(() => [Order])
-  async orders(
-    @Context() context: ContextWithUserId
-  ): Promise<Order[]> {
+  async orders(@Context() context: ContextWithUserId): Promise<Order[]> {
     // Mock: use userId from context (would come from JWT token in production)
     const userId = context.userId || 'user-1';
     return this.orderService.getUserOrders(userId);
   }
 
   @Mutation(() => Order)
+  @UseGuards(JwtAuthGuard)
   async createOrder(
     @Args('cartId') cartId: string,
     @Args('items', { type: () => [OrderItemInput] })
@@ -55,6 +56,7 @@ export class OrderResolver {
   }
 
   @Mutation(() => Order, { nullable: true })
+  @UseGuards(JwtAuthGuard)
   async updateOrderStatus(
     @Args('orderId') orderId: string,
     @Args('status') status: OrderStatus
@@ -63,6 +65,7 @@ export class OrderResolver {
   }
 
   @Mutation(() => Order, { nullable: true })
+  @UseGuards(JwtAuthGuard)
   async cancelOrder(@Args('orderId') orderId: string): Promise<Order | null> {
     return this.orderService.cancelOrder(orderId);
   }

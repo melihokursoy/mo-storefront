@@ -67,7 +67,9 @@ export class OrderService {
   }
 
   async getUserOrders(userId: string): Promise<Order[]> {
-    return Object.values(this.orders).filter((order) => order.userId === userId);
+    return Object.values(this.orders).filter(
+      (order) => order.userId === userId
+    );
   }
 
   async updateOrderStatus(
