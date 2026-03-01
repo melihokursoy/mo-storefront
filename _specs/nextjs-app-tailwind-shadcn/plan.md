@@ -29,7 +29,7 @@ Add `"apps/*"` to the workspaces array:
 ### 2. Install @nx/next Plugin
 
 ```sh
-npm install --save-dev @nx/next
+npx nx add @nx/next
 ```
 
 **✅ Checkpoint 1: Workspace Configuration**
@@ -52,11 +52,13 @@ git commit -m "✨ feat: configure nx workspace and install @nx/next plugin"
 
 Check available flags first, then run:
 ```sh
-npm exec nx generate @nx/next:app -- --name=storefront --directory=apps/storefront --no-src --style=css
+npx nx generate @nx/next:app --name=storefront --directory=apps/storefront --no-src --style=css
 ```
 
 - `--no-src` (or `--no-srcDir`) — flat layout, no `src/` folder
 - `--style=css` — Tailwind replaces default styles
+
+**Note:** The generator will automatically create initial configuration files. Verify what was generated and only manually add/override what's needed in subsequent steps.
 
 **✅ Checkpoint 2: Next.js App Generation**
 
@@ -77,12 +79,19 @@ git commit -m "✨ feat: generate next.js app with flat directory structure"
 
 ### 4. Configure Tailwind CSS
 
-Install dependencies:
+The `@nx/next` generator with `--style=css` may have already installed Tailwind and created configuration. Verify and complete the following:
+
+**Check what exists:**
+```sh
+ls apps/storefront/tailwind.config.js apps/storefront/postcss.config.js 2>/dev/null && echo "✓ Config files exist"
+```
+
+**If missing, install dependencies:**
 ```sh
 npm install --save-dev tailwindcss postcss autoprefixer
 ```
 
-Create `apps/storefront/tailwind.config.js`:
+**If needed, create `apps/storefront/tailwind.config.js`:**
 ```js
 module.exports = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
@@ -91,12 +100,12 @@ module.exports = {
 }
 ```
 
-Create `apps/storefront/postcss.config.js`:
+**If needed, create `apps/storefront/postcss.config.js`:**
 ```js
 module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } }
 ```
 
-Update `apps/storefront/app/globals.css` to add Tailwind directives at the top:
+**Ensure `apps/storefront/app/globals.css` has Tailwind directives at the top:**
 ```css
 @tailwind base;
 @tailwind components;
@@ -232,13 +241,13 @@ git commit -m "✅ test: add unit tests for app setup and configuration"
 ### 9. Install @nx/playwright Plugin
 
 ```sh
-npm install --save-dev @nx/playwright
+npx nx add @nx/playwright
 ```
 
 ### 10. Generate Playwright E2E App
 
 ```sh
-npm exec nx generate @nx/playwright:configuration -- --project=storefront --directory=apps/storefront-e2e --baseUrl=http://localhost:3000
+npx nx generate @nx/playwright:configuration --project=storefront --directory=apps/storefront-e2e --baseUrl=http://localhost:3000
 ```
 
 This generates:
