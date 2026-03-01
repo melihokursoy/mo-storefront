@@ -19,10 +19,10 @@
 - [x] Generate Order subgraph at apps/api-order
 - [x] Verify all subgraph structures
 
-### Checkpoint 4: Federation Dependencies Installed
+### Checkpoint 4: Federation Dependencies Installed ✅ COMPLETE
 
-- [ ] Install @apollo/gateway, @apollo/subgraph, @nestjs/graphql, apollo-server
-- [ ] Verify all dependencies installed across workspace
+- [x] Install @apollo/gateway, @apollo/subgraph, @nestjs/graphql, apollo-server
+- [x] Verify all dependencies installed across workspace
 
 ## Phase 2: Gateway Setup
 
@@ -226,3 +226,16 @@ _Observations from implementation:_
 - ✓ Added "jest" and "node" types to all e2e tsconfig.json files to fix TypeScript errors
 - ✓ All subgraph structures verified successfully
 - ✓ Ready to install federation dependencies (Checkpoint 4)
+
+## Checkpoint 4 Notes
+
+- ✓ Installed @apollo/gateway@2.13.1 (Apollo Federation v2 gateway)
+- ✓ Installed @apollo/subgraph@2.13.1 (Federation v2 subgraph support)
+- ✓ Installed @nestjs/graphql@13.2.4 (NestJS GraphQL integration)
+- ✓ Installed @nestjs/apollo@13.2.4 (NestJS Apollo integration)
+- ✓ Installed graphql@16.13.0 (GraphQL core library)
+- ✓ Installed apollo-server@3.13.0 (Apollo Server core)
+- ✓ Installed @types/graphql (TypeScript types for GraphQL)
+- ⚠️ Apollo Server v3 is EOL (use v4/v5 patterns in future updates, currently compatible with NestJS)
+- ✓ All dependencies verified across workspace
+- ✓ Ready to configure Apollo Gateway (Checkpoint 5)
