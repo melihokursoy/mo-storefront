@@ -1,5 +1,15 @@
 # Implementation Plan: Next.js App with Tailwind CSS and Shadcn UI
 
+## 🔄 Todo Tracking Workflow
+
+**IMPORTANT**: After completing each named checkpoint section:
+1. Update `_specs/nextjs-app-tailwind-shadcn/todos.md` to mark items `[x]` as complete
+2. Add observations to the "Review Notes" section
+3. Include `todos.md` in the commit along with implementation changes
+4. This ensures progress is always tracked and visible
+
+---
+
 ## Context
 
 The monorepo (`mo-storefront`) is a brand-new Nx workspace (v22.5.1) with no apps yet. This plan covers generating a Next.js app (`apps/storefront`) configured with Tailwind CSS and Shadcn UI, using a flat directory layout (no `src/` folder). The workspace currently only has `@nx/js` installed; `@nx/next`, Tailwind, and Shadcn must all be added. Tests go in a root-level `./tests/` folder using Node's built-in test runner.
@@ -40,10 +50,19 @@ git diff package.json          # Check workspaces array updated
 npm list @nx/next              # Confirm @nx/next installed
 ```
 
-Commit:
+**📝 Update Todos:**
 ```sh
-git add package.json package-lock.json
-git commit -m "✨ feat: configure nx workspace and install @nx/next plugin"
+# Edit _specs/nextjs-app-tailwind-shadcn/todos.md and mark complete:
+# - [x] Update `package.json` - add `apps/*` to workspaces array
+# - [x] Install `@nx/next` plugin
+```
+
+Commit (include todos.md):
+```sh
+git add package.json package-lock.json _specs/nextjs-app-tailwind-shadcn/todos.md
+git commit -m "✨ feat: configure nx workspace and install @nx/next plugin
+
+Mark todos.md checkpoint 1 items as complete."
 ```
 
 ---
@@ -91,10 +110,30 @@ npx nx e2e storefront-e2e                  # Run Playwright e2e tests
 kill %1                                     # Stop background server
 ```
 
-Commit:
+**📝 Update Todos:**
 ```sh
-git add apps/storefront/ apps/storefront-e2e/ package.json nx.json tsconfig.json .gitignore .vscode/
-git commit -m "✨ feat: generate next.js app with flat directory structure and e2e tests"
+# Edit _specs/nextjs-app-tailwind-shadcn/todos.md and mark complete:
+# Checkpoint 2 completed items:
+# - [x] Generate Next.js app
+# - [x] Verify flat directory structure
+# - [x] Run build - succeeds
+# - [x] Run e2e tests - pass
+#
+# Update "Review Notes" section with observations:
+# - What went smoothly? (e.g., generators auto-configured everything)
+# - What was unexpected? (e.g., E2E app generated automatically)
+# - Improvements? (e.g., use `npx nx` instead of `npm exec nx`)
+```
+
+Commit (include todos.md with review notes):
+```sh
+git add apps/storefront/ apps/storefront-e2e/ package.json nx.json tsconfig.json .gitignore .vscode/ _specs/nextjs-app-tailwind-shadcn/todos.md
+git commit -m "✨ feat: generate next.js app with flat directory structure and e2e tests
+
+Mark checkpoint 2 todos complete. Add review notes documenting:
+- What went smoothly
+- What was unexpected
+- Plan improvements identified"
 ```
 
 ---
