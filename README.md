@@ -1,105 +1,93 @@
-# New Nx Repository
+# mo-storefront
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A modern monorepo for building storefront applications, powered by [Nx](https://nx.dev).
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## Quick Start
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-## Try the full Nx platform
-🚀 If you haven't connected to Nx Cloud yet, [complete your setup here](https://cloud.nx.app/setup/connect-workspace/guide). Get faster builds with remote caching, distributed task execution, and self-healing CI. [See how your workspace can benefit](#nx-cloud).
-## Generate a library
+### Prerequisites
 
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
+- Node.js (v18 or higher)
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/melihokursoy/mo-storefront.git
+cd mo-storefront
+
+# Install dependencies
+npm install
+# or: yarn install / pnpm install / bun install
 ```
 
-## Run tasks
+## Development
 
-To build the library use:
+### Build & Test
 
-```sh
-npx nx build pkg1
+```bash
+# Build all packages
+npx nx run-many --target=build
+
+# Run tests
+npx nx run-many --target=test
+
+# Lint code
+npx nx run-many --target=lint
+
+# Type check
+npx nx run-many --target=typecheck
 ```
 
-To run any task with Nx use:
+### Create New Packages
 
-```sh
-npx nx <target> <project-name>
+To add a new library to the workspace:
+
+```bash
+npx nx generate @nx/js:lib packages/my-package --publishable
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+## Project Structure
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Versioning and releasing
-
-To version and release the library use
+This is an Nx monorepo with the following structure:
 
 ```
-npx nx release
+mo-storefront/
+├── packages/           # Workspace packages/libraries
+├── .claude/            # Claude Code configuration
+│   └── commands/       # Custom Claude Code commands
+├── _spec/              # Feature specification templates
+├── nx.json            # Nx workspace configuration
+├── package.json       # Root dependencies
+└── tsconfig.json      # TypeScript configuration
 ```
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+## Custom Commands
 
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+This project includes custom [Claude Code](https://claude.com/claude-code) commands for streamlined development:
 
-## Keep TypeScript project references up to date
+- **`/spec`** - Create a feature specification and branch
+- **`/commit`** - Generate a commit message from staged changes
 
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
+### Development Workflow
 
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
+1. Use `/spec "feature description"` to create a feature specification and branch
+2. Implement the feature on the new branch
+3. Use `/commit` to create a well-formatted commit message
+4. Push to GitHub and create a pull request
 
-```sh
-npx nx sync
-```
+## Technologies
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+- **[Nx](https://nx.dev)** - Build system and monorepo management
+- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
+- **[Prettier](https://prettier.io/)** - Code formatting
 
-```sh
-npx nx sync:check
-```
+## License
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
+MIT
 
-## Nx Cloud
+## Resources
 
-Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Set up CI (non-Github Actions CI)
-
-**Note:** This is only required if your CI provider is not GitHub Actions.
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [Nx Documentation](https://nx.dev)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Nx Console Extension](https://nx.dev/getting-started/editor-setup)
