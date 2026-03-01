@@ -12,10 +12,10 @@
 - [x] Update `apps/storefront/tsconfig.json` with correct module/moduleResolution overrides
 
 ## Tailwind CSS Configuration
-- [ ] Create `apps/storefront/tailwind.config.js`
-- [ ] Create `apps/storefront/postcss.config.js`
-- [ ] Update `apps/storefront/app/globals.css` with `@tailwind` directives
-- [ ] Verify Tailwind is processing styles correctly
+- [x] Create `apps/storefront/tailwind.config.js`
+- [x] Create `apps/storefront/postcss.config.js`
+- [x] Update `apps/storefront/app/global.css` with `@tailwind` directives
+- [x] Verify Tailwind is processing styles correctly (build succeeds)
 
 ## Shadcn UI Setup
 - [ ] Initialize Shadcn: `cd apps/storefront && npx shadcn@latest init`
@@ -84,3 +84,9 @@ _Observations from implementation:_
 - [x] Performance considerations?
   - ✓ Next.js 16 with Turbopack - significantly faster compilation
   - ✓ E2E tests run in parallel across 3 browsers (15.5s total)
+
+## Checkpoint 3 Notes
+- ✓ Tailwind CSS v4 requires `@tailwindcss/postcss` (separate package from older versions)
+- ✓ Updated PostCSS config to use new plugin
+- ✓ Simplified tailwind.config.js for v4 (removed theme/plugins sections)
+- ✓ Build succeeds with Tailwind directives processing correctly
