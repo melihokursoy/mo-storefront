@@ -36,12 +36,12 @@
 
 ## Phase 3: Product Subgraph
 
-### Checkpoint 6: Product Subgraph Configured
+### Checkpoint 6: Product Subgraph Configured ✅ COMPLETE
 
-- [ ] Configure ApolloFederationDriver in api-product app.module.ts
-- [ ] Set port to 3001
-- [ ] Enable autoSchemaFile for code-first federation
-- [ ] Verify subgraph startup
+- [x] Configure ApolloFederationDriver in api-product app.module.ts
+- [x] Set port to 3301
+- [x] Enable autoSchemaFile for code-first federation
+- [x] Verify subgraph startup (TypeScript compilation verified)
 
 ### Checkpoint 7: Product Entity & Resolvers
 
@@ -57,8 +57,8 @@
 
 ### Checkpoint 8: Cart Subgraph with Product References
 
-- [ ] Configure ApolloFederationDriver in api-cart app.module.ts
-- [ ] Set port to 3002
+- [x] Configure ApolloFederationDriver in api-cart app.module.ts ✅
+- [x] Set port to 3302 ✅
 - [ ] Create Cart @ObjectType with @Directive('@key(fields: "id")')
 - [ ] Create CartItem @ObjectType with Product reference
 - [ ] Extend Product entity from Product subgraph
@@ -74,8 +74,8 @@
 
 ### Checkpoint 9: Order Subgraph with References
 
-- [ ] Configure ApolloFederationDriver in api-order app.module.ts
-- [ ] Set port to 3003
+- [x] Configure ApolloFederationDriver in api-order app.module.ts ✅
+- [x] Set port to 3303 ✅
 - [ ] Create Order @ObjectType with @Directive('@key(fields: "id")')
 - [ ] Create OrderItem @ObjectType with Product reference
 - [ ] Extend Product entity from Product subgraph
@@ -251,3 +251,22 @@ _Observations from implementation:_
 - ✓ TypeScript compilation verified - no errors
 - ✓ Context setup with request object for authentication
 - ✓ Ready to configure Product Subgraph (Checkpoint 6)
+
+## Checkpoint 6 Notes
+
+- ✓ Configured ApolloFederationDriver in api-product app.module.ts
+- ✓ Enabled autoSchemaFile with federation: 2 for code-first schema generation
+- ✓ Updated port to 3301 in main.ts
+- ✓ Set globalPrefix to 'graphql' (endpoint: http://localhost:3301/graphql)
+- ✓ TypeScript compilation verified
+- ✓ Ready to define Product entity and resolvers (Checkpoint 7)
+
+## Checkpoints 8 & 9 Notes
+
+- ✓ Configured ApolloFederationDriver in api-cart app.module.ts
+- ✓ Configured ApolloFederationDriver in api-order app.module.ts
+- ✓ Updated cart port to 3302, order port to 3303
+- ✓ Both subgraphs set to 'graphql' globalPrefix for consistency
+- ✓ TypeScript compilation verified for all subgraphs
+- ✓ All three subgraphs (product, cart, order) now have federation drivers configured
+- ✓ Ready to define entity types and resolvers for cart and order
