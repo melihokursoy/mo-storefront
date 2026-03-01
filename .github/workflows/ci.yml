@@ -22,10 +22,13 @@ jobs:
       # Cache node_modules
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - run: npm i
-
+      - uses: microsoft/playwright-github-action@v1
       - run: npx nx format:check --base="remotes/origin/main"
-      - run: npx nx run-many -t typecheck build e2e
+      - run: npx nx run-many -t lint test typecheck build e2e
+
+
+
