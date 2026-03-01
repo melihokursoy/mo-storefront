@@ -121,10 +121,7 @@ export class CartService {
   }
 
   private recalculate(cart: Cart): void {
-    cart.totalPrice = cart.items.reduce(
-      (sum, item) => sum + item.subtotal,
-      0
-    );
+    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.subtotal, 0);
     cart.itemCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
     cart.updatedAt = new Date().toISOString();
   }

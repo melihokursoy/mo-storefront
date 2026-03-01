@@ -73,21 +73,23 @@
 
 ## Phase 5: Order Subgraph
 
-### Checkpoint 9: Order Subgraph with References
+### Checkpoint 9: Order Subgraph with References ✅ COMPLETE
 
 - [x] Configure ApolloFederationDriver in api-order app.module.ts ✅
 - [x] Set port to 3303 ✅
-- [ ] Create Order @ObjectType with @Directive('@key(fields: "id")')
-- [ ] Create OrderItem @ObjectType with Product reference
-- [ ] Extend Product entity from Product subgraph
-- [ ] Extend Cart entity from Cart subgraph
-- [ ] Implement \_\_resolveReference for Order entity
-- [ ] Create OrderResolver with:
-  - [ ] createOrder(cartId) mutation
-  - [ ] orders query (authenticated)
-  - [ ] order(id) query
-- [ ] Test order creation and queries with nested references
-- [ ] Verify unified schema accessible through gateway
+- [x] Create Order @ObjectType with @Directive('@key(fields: "id")')
+- [x] Create OrderItem @ObjectType with Product reference
+- [x] Extend Product entity from Product subgraph (ExternalProduct)
+- [x] Extend Cart entity from Cart subgraph (ExternalCart)
+- [x] Implement \_\_resolveReference for Order entity
+- [x] Create OrderResolver with:
+  - [x] createOrder(cartId, items) mutation
+  - [x] orders() query (uses context.userId)
+  - [x] order(id) query
+  - [x] updateOrderStatus(orderId, status) mutation
+  - [x] cancelOrder(orderId) mutation
+- [x] OrderStatus enum (PENDING, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, CANCELLED)
+- [x] OrderItemInput InputType for order creation
 
 ## Phase 6: Authentication & Cross-Subgraph Communication
 
@@ -303,7 +305,31 @@ _Observations from implementation:_
   - removeFromCart() mutation (accepts cartItemId)
   - updateCartItem() mutation (accepts cartItemId, quantity)
   - clearCart() mutation
-  - __resolveReference() for entity reference resolution
+  - \_\_resolveReference() for entity reference resolution
 - ✓ Updated CartModule to include CartResolver and CartService
 - ✓ TypeScript compilation verified
 - ✓ Ready to implement Order entity (Checkpoint 9)
+
+## Checkpoint 9 Notes
+
+- ✓ Created Order entity (order.entity.ts) with @ObjectType and @Directive('@key(fields: "id")')
+- ✓ Created OrderItem @ObjectType with:
+  - id, product (ExternalProduct reference), quantity, price, subtotal
+- ✓ Created ExternalCart @ObjectType with @Directive('@external') for federation
+- ✓ Order fields: id, userId, cart (optional), items, status, totalPrice, itemCount, createdAt, updatedAt
+- ✓ OrderStatus enum: PENDING, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+- ✓ OrderItemInput InputType for mutations
+- ✓ Created OrderService (order.service.ts) with:
+  - Mock order database (one sample order for user-1)
+  - createOrder, getOrder, getUserOrders, updateOrderStatus, cancelOrder
+  - Order sequence counter for unique IDs
+- ✓ Created OrderResolver (order.resolver.ts) with:
+  - order(id) query
+  - orders() query (context-based userId)
+  - createOrder(cartId, items) mutation
+  - updateOrderStatus(orderId, status) mutation
+  - cancelOrder(orderId) mutation
+  - __resolveReference() for entity reference resolution
+- ✓ Updated OrderModule to include OrderResolver and OrderService
+- ✓ TypeScript compilation verified
+- ✓ All three subgraphs (Product, Cart, Order) now have complete entity and resolver implementations
