@@ -1,4 +1,5 @@
 import styles from './page.module.css';
+import { Button } from '@/components/ui/button';
 
 export default function Index() {
   /*
@@ -15,6 +16,7 @@ export default function Index() {
               <span> Hello there, </span>
               Welcome storefront 👋
             </h1>
+            <Button>Click me with Shadcn UI!</Button>
           </div>
 
           <div id="hero" className="rounded">

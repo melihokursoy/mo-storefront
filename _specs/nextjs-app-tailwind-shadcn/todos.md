@@ -24,10 +24,10 @@
 - [x] Verify Tailwind is processing styles correctly (build succeeds)
 
 ## Shadcn UI Setup
-- [ ] Initialize Shadcn: `cd apps/storefront && npx shadcn@latest init`
-- [ ] Confirm Shadcn created `components.json` and `lib/utils.ts`
-- [ ] Add Button component: `npx shadcn@latest add button --cwd=apps/storefront`
-- [ ] Update `apps/storefront/app/page.tsx` to import and render Button component
+- [x] Initialize Shadcn: `npx shadcn@latest init` (Neutral theme, CSS variables enabled)
+- [x] Confirm Shadcn created `components.json` and `lib/utils.ts`
+- [x] Add Button component: `npx shadcn@latest add button`
+- [x] Update `apps/storefront/app/page.tsx` to import and render Button component
 
 ## Unit Tests
 - [ ] Create `tests/nextjs-app-tailwind-shadcn/setup.test.ts`
@@ -96,6 +96,16 @@ _Observations from implementation:_
 - ✓ Updated PostCSS config to use new plugin
 - ✓ Simplified tailwind.config.js for v4 (removed theme/plugins sections)
 - ✓ Build succeeds with Tailwind directives processing correctly
+
+## Checkpoint 5 Notes
+- ✓ Shadcn v4 requires Tailwind CSS installed in the app package.json dependencies
+- ✓ Shadcn init needs to be run from the app directory (apps/storefront)
+- ✓ Automatically updates tailwind.config.js with CSS variables support
+- ✓ Creates components.json for configuration
+- ✓ lib/utils.ts provides utility functions (cn for class merging)
+- ✓ Button component uses default variant and size system
+- ✓ Path alias @/ works perfectly for clean imports
+- ✓ Build succeeds with Button component integrated
 
 ## Checkpoint 4 Notes
 - ✓ @nx/next generator automatically configured TypeScript perfectly
