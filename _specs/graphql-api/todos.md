@@ -7,10 +7,10 @@
 - [x] Install @nx/nest plugin (@nx/nest@22.5.3)
 - [x] Verify plugin installation (18 generators available)
 
-### Checkpoint 2: Apollo Gateway Generated
+### Checkpoint 2: Apollo Gateway Generated ✅ COMPLETE
 
-- [ ] Generate NestJS app at apps/api-gateway
-- [ ] Verify gateway app structure
+- [x] Generate NestJS app at apps/api-gateway
+- [x] Verify gateway app structure
 
 ### Checkpoint 3: All Subgraphs Generated
 
@@ -204,3 +204,14 @@ _Observations from implementation:_
 - ✓ 18 generators available (application, library, resolver, controller, service, etc.)
 - ✓ No issues during installation (ignore glob deprecation warnings - not blocking)
 - ✓ Ready to proceed with Checkpoint 2: Apollo Gateway generation
+
+## Checkpoint 2 Notes
+
+- ✓ Generated NestJS app at apps/api-gateway using @nx/nest:app generator
+- ✓ App structure created with: main.ts, app.module.ts, app.controller.ts, app.service.ts
+- ✓ E2E test suite created at apps/api-gateway-e2e
+- ✓ Package.json and nx.json configurations updated automatically
+- ✓ VSCode launch configuration created (.vscode/launch.json)
+- ✓ Gateway app is ready for Apollo Federation configuration
+- ⚠️ Husky deprecation warning noted (v10.0.0 will change format) - not blocking
+- ℹ️ Next step: Install federation dependencies (Checkpoint 3)
