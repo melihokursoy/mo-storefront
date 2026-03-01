@@ -54,10 +54,7 @@ test('lib/utils.ts exists (Shadcn utilities)', () => {
 
 test('Button component exists', () => {
   const buttonPath = join(appDir, 'components/ui/button.tsx');
-  assert.ok(
-    existsSync(buttonPath),
-    'components/ui/button.tsx should exist'
-  );
+  assert.ok(existsSync(buttonPath), 'components/ui/button.tsx should exist');
 });
 
 test('TypeScript compiles successfully', () => {

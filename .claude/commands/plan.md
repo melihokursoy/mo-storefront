@@ -1,6 +1,6 @@
 ---
-description: Create a technical plan for the spec file 
-argument-hint: Short technical implementation details 
+description: Create a technical plan for the spec file
+argument-hint: Short technical implementation details
 allowed-tools: Read, Write, Glob
 ---
 
@@ -14,39 +14,38 @@ Your job will be to turn the spec file into a technical plan:
 
 - A human friendly feature title in kebab-case (e.g. new-heist-form)
 - A safe git branch name not already taken (e.g. feature/new-heist-form)
-- A detailed markdown plan file under the _specs/<feature_slug> directory
+- A detailed markdown plan file under the \_specs/<feature_slug> directory
 
 Then save the plan.md file to disk and print a short summary of what you did.
 
 ## Step 1. Extract Feature Slug
 
-extract <feature_slug> from the current branch that is defined in spec file and inform user that you started working for <feature_slug> and will generate a plan.md file in _spec/<<feature_slug>
+extract <feature_slug> from the current branch that is defined in spec file and inform user that you started working for <feature_slug> and will generate a plan.md file in \_spec/<feature_slug>
 
 ## Step 2. Parse the arguments
 
 From `$ARGUMENTS`, extract technical implementation details requested
 
-## Step 3. Check for existing plan  
+## Step 3. Check for existing plan
 
 Read the plan.md if there is already one created and iterate on that
 
-## Step 4. Ask questions 
+## Step 4. Ask questions
 
-. ask questions iteratively when you cannot decide with options eash to chose from like A,B or type your advice. 
+. ask questions iteratively when you cannot decide with options eash to chose from like A,B or type your advice.
 
 ## Step 5. Draft the plan content
 
-Create a markdown plan document that Plan mode can use directly and save it in the _specs folder using the `feature_slug`.  
+Create a markdown plan document that Plan mode can use directly and save it in the \_specs folder using the `feature_slug`.
 
 ## Step 6. Create todos
 
-create checkable todo list in _spec/<<feature_slug>/todos.md and check what is done during implementation. 
+create checkable todo list in \_spec/<feature_slug>/todos.md and check what is done during implementation.
 
 ## Step 7. Final output to the user
 
 After the file is saved, respond to the user with a short summary in this exact format:
 
-plan file: _specs/<feature_slug>/plan.md
-
+plan file: \_specs/<feature_slug>/plan.md
 
 Do not repeat the full plan in the chat output unless the user explicitly asks to see it. The main goal is to save the plan file and report where it lives.

@@ -3,6 +3,7 @@
 ## 🔄 Todo Tracking Workflow
 
 **IMPORTANT**: After completing each named checkpoint section:
+
 1. Update `_specs/nextjs-app-tailwind-shadcn/todos.md` to mark items `[x]` as complete
 2. Add observations to the "Review Notes" section
 3. Include `todos.md` in the commit along with implementation changes
@@ -32,6 +33,7 @@ The monorepo (`mo-storefront`) is a brand-new Nx workspace (v22.5.1) with no app
 **File:** `package.json`
 
 Add `"apps/*"` to the workspaces array:
+
 ```json
 "workspaces": ["packages/*", "apps/*"]
 ```
@@ -45,12 +47,14 @@ npx nx add @nx/next
 **✅ Checkpoint 1: Workspace Configuration**
 
 Verify:
+
 ```sh
 git diff package.json          # Check workspaces array updated
 npm list @nx/next              # Confirm @nx/next installed
 ```
 
 **📝 Update Todos:**
+
 ```sh
 # Edit _specs/nextjs-app-tailwind-shadcn/todos.md and mark complete:
 # - [x] Update `package.json` - add `apps/*` to workspaces array
@@ -58,6 +62,7 @@ npm list @nx/next              # Confirm @nx/next installed
 ```
 
 Commit (include todos.md):
+
 ```sh
 git add package.json package-lock.json _specs/nextjs-app-tailwind-shadcn/todos.md
 git commit -m "✨ feat: configure nx workspace and install @nx/next plugin
@@ -70,6 +75,7 @@ Mark todos.md checkpoint 1 items as complete."
 ### 3. Generate the Next.js App
 
 Check available flags first, then run:
+
 ```sh
 npx nx generate @nx/next:app --name=storefront --directory=apps/storefront --no-src --style=css
 ```
@@ -82,6 +88,7 @@ npx nx generate @nx/next:app --name=storefront --directory=apps/storefront --no-
 **✅ Checkpoint 2: Next.js App Generation**
 
 Verify app structure:
+
 ```sh
 ls -la apps/storefront/                    # App structure created
 cat apps/storefront/next.config.js         # Config file exists
@@ -89,6 +96,7 @@ test ! -d apps/storefront/src && echo "✓ No src folder" || echo "✗ src folde
 ```
 
 Test app in dev mode:
+
 ```sh
 npx nx serve storefront                    # Start dev server on http://localhost:3000
 # Verify page loads in browser or with curl
@@ -97,12 +105,14 @@ curl -s http://localhost:3000 | head -20  # Check HTML response
 ```
 
 Test build:
+
 ```sh
 npx nx build storefront                    # Build for production
 test -d apps/storefront/.next && echo "✓ Build succeeded" || echo "✗ Build failed"
 ```
 
 Test E2E (with dev server running in background):
+
 ```sh
 npx nx serve storefront &                  # Start dev server in background
 sleep 3                                     # Wait for server to start
@@ -111,6 +121,7 @@ kill %1                                     # Stop background server
 ```
 
 **📝 Update Todos:**
+
 ```sh
 # Edit _specs/nextjs-app-tailwind-shadcn/todos.md and mark complete:
 # Checkpoint 2 completed items:
@@ -126,6 +137,7 @@ kill %1                                     # Stop background server
 ```
 
 Commit (include todos.md with review notes):
+
 ```sh
 git add apps/storefront/ apps/storefront-e2e/ package.json nx.json tsconfig.json .gitignore .vscode/ _specs/nextjs-app-tailwind-shadcn/todos.md
 git commit -m "✨ feat: generate next.js app with flat directory structure and e2e tests
@@ -143,30 +155,35 @@ Mark checkpoint 2 todos complete. Add review notes documenting:
 The `@nx/next` generator with `--style=css` may have already installed Tailwind and created configuration. Verify and complete the following:
 
 **Check what exists:**
+
 ```sh
 ls apps/storefront/tailwind.config.js apps/storefront/postcss.config.js 2>/dev/null && echo "✓ Config files exist"
 ```
 
 **If missing, install dependencies:**
+
 ```sh
 npm install --save-dev tailwindcss postcss autoprefixer
 ```
 
 **If needed, create `apps/storefront/tailwind.config.js`:**
+
 ```js
 module.exports = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   theme: { extend: {} },
   plugins: [],
-}
+};
 ```
 
 **If needed, create `apps/storefront/postcss.config.js`:**
+
 ```js
-module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } }
+module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } };
 ```
 
 **Ensure `apps/storefront/app/globals.css` has Tailwind directives at the top:**
+
 ```css
 @tailwind base;
 @tailwind components;
@@ -176,6 +193,7 @@ module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } }
 **✅ Checkpoint 3: Tailwind CSS Configuration**
 
 Verify:
+
 ```sh
 test -f apps/storefront/tailwind.config.js && echo "✓ tailwind.config.js exists"
 test -f apps/storefront/postcss.config.js && echo "✓ postcss.config.js exists"
@@ -184,6 +202,7 @@ npm list tailwindcss postcss autoprefixer  # Confirm dependencies installed
 ```
 
 Commit:
+
 ```sh
 git add apps/storefront/tailwind.config.js apps/storefront/postcss.config.js apps/storefront/app/globals.css package-lock.json
 git commit -m "🎨 style: configure tailwind css with post-processing"
@@ -196,6 +215,7 @@ git commit -m "🎨 style: configure tailwind css with post-processing"
 **File:** `apps/storefront/tsconfig.json`
 
 Override `module`/`moduleResolution` (base uses `nodenext` which conflicts with Next.js):
+
 ```json
 {
   "extends": "../../tsconfig.base.json",
@@ -211,6 +231,7 @@ Override `module`/`moduleResolution` (base uses `nodenext` which conflicts with 
 **✅ Checkpoint 4: TypeScript Configuration**
 
 Verify:
+
 ```sh
 grep -q '"module": "esnext"' apps/storefront/tsconfig.json && echo "✓ module set to esnext"
 grep -q '"moduleResolution": "bundler"' apps/storefront/tsconfig.json && echo "✓ moduleResolution set to bundler"
@@ -218,6 +239,7 @@ npx nx typecheck storefront           # TypeScript compiles
 ```
 
 Commit:
+
 ```sh
 git add apps/storefront/tsconfig.json
 git commit -m "🔧 chore: fix typescript config for next.js compatibility"
@@ -232,6 +254,7 @@ cd apps/storefront && npx shadcn@latest init
 ```
 
 Choices:
+
 - Style: New York
 - Base color: Neutral
 - CSS variables: yes
@@ -239,6 +262,7 @@ Choices:
 This creates `components.json`, updates `tailwind.config.js`, creates `lib/utils.ts`.
 
 Add the Button component:
+
 ```sh
 npx shadcn@latest add button --cwd=apps/storefront
 ```
@@ -250,6 +274,7 @@ Import and render `<Button>` from `@/components/ui/button` to confirm end-to-end
 **✅ Checkpoint 5: Shadcn UI Integration**
 
 Verify:
+
 ```sh
 test -f apps/storefront/components.json && echo "✓ components.json created"
 test -f apps/storefront/lib/utils.ts && echo "✓ lib/utils.ts created"
@@ -259,6 +284,7 @@ npx nx build storefront                # Build succeeds with Shadcn
 ```
 
 Commit:
+
 ```sh
 git add apps/storefront/components.json apps/storefront/lib/utils.ts apps/storefront/components/ui/button.tsx apps/storefront/app/page.tsx
 git commit -m "✨ feat: initialize shadcn ui and integrate button component"
@@ -279,6 +305,7 @@ Use Node's built-in `node:test` runner (no new framework needed). Test cases:
 5. Build succeeds: `npx nx build storefront`
 
 Run with:
+
 ```sh
 node --experimental-strip-types --test tests/nextjs-app-tailwind-shadcn/setup.test.ts
 ```
@@ -286,12 +313,14 @@ node --experimental-strip-types --test tests/nextjs-app-tailwind-shadcn/setup.te
 **✅ Checkpoint 6: Unit Tests**
 
 Verify:
+
 ```sh
 test -f tests/nextjs-app-tailwind-shadcn/setup.test.ts && echo "✓ Test file created"
 node --experimental-strip-types --test tests/nextjs-app-tailwind-shadcn/setup.test.ts
 ```
 
 Commit:
+
 ```sh
 git add tests/nextjs-app-tailwind-shadcn/setup.test.ts
 git commit -m "✅ test: add unit tests for app setup and configuration"
@@ -312,6 +341,7 @@ npx nx generate @nx/playwright:configuration --project=storefront --directory=ap
 ```
 
 This generates:
+
 - `apps/storefront-e2e/` directory with Playwright configuration
 - `playwright.config.ts` with baseUrl pointing to dev server
 - `e2e/` folder for test specs
@@ -321,6 +351,7 @@ This generates:
 **File:** `apps/storefront-e2e/e2e/app.spec.ts`
 
 Test scenarios:
+
 1. Homepage loads successfully (status 200, page has content)
 2. Button component renders and is interactive
 3. Tailwind styles are applied (check computed styles)
@@ -328,6 +359,7 @@ Test scenarios:
 5. Shadcn UI components render properly
 
 Example structure:
+
 ```typescript
 import { test, expect } from '@playwright/test';
 
@@ -354,6 +386,7 @@ Ensure it points to `baseUrl: 'http://localhost:3000'` for dev server. The gener
 **✅ Checkpoint 7: Playwright E2E Testing**
 
 Verify:
+
 ```sh
 test -d apps/storefront-e2e && echo "✓ E2E app directory created"
 test -f apps/storefront-e2e/playwright.config.ts && echo "✓ Playwright config exists"
@@ -363,6 +396,7 @@ npx nx e2e storefront-e2e              # Run e2e tests (with dev server running)
 ```
 
 Commit:
+
 ```sh
 git add apps/storefront-e2e/
 git commit -m "✅ test: add playwright e2e tests with comprehensive scenarios"
@@ -372,20 +406,20 @@ git commit -m "✅ test: add playwright e2e tests with comprehensive scenarios"
 
 ## Critical Files
 
-| File | Action |
-|---|---|
-| `package.json` | Add `apps/*` to workspaces |
-| `apps/storefront/tsconfig.json` | Override module/moduleResolution |
-| `apps/storefront/tailwind.config.js` | Create with content paths |
-| `apps/storefront/postcss.config.js` | Create for Tailwind processing |
-| `apps/storefront/app/globals.css` | Add `@tailwind` directives |
-| `apps/storefront/components.json` | Created by Shadcn init |
-| `apps/storefront/lib/utils.ts` | Created by Shadcn init |
-| `apps/storefront/components/ui/button.tsx` | Created by `shadcn add button` |
-| `apps/storefront/app/page.tsx` | Updated to use Button component |
-| `tests/nextjs-app-tailwind-shadcn/setup.test.ts` | New unit test file |
-| `apps/storefront-e2e/playwright.config.ts` | Generated Playwright config |
-| `apps/storefront-e2e/e2e/app.spec.ts` | E2E test specs |
+| File                                             | Action                           |
+| ------------------------------------------------ | -------------------------------- |
+| `package.json`                                   | Add `apps/*` to workspaces       |
+| `apps/storefront/tsconfig.json`                  | Override module/moduleResolution |
+| `apps/storefront/tailwind.config.js`             | Create with content paths        |
+| `apps/storefront/postcss.config.js`              | Create for Tailwind processing   |
+| `apps/storefront/app/globals.css`                | Add `@tailwind` directives       |
+| `apps/storefront/components.json`                | Created by Shadcn init           |
+| `apps/storefront/lib/utils.ts`                   | Created by Shadcn init           |
+| `apps/storefront/components/ui/button.tsx`       | Created by `shadcn add button`   |
+| `apps/storefront/app/page.tsx`                   | Updated to use Button component  |
+| `tests/nextjs-app-tailwind-shadcn/setup.test.ts` | New unit test file               |
+| `apps/storefront-e2e/playwright.config.ts`       | Generated Playwright config      |
+| `apps/storefront-e2e/e2e/app.spec.ts`            | E2E test specs                   |
 
 ## Verification
 
