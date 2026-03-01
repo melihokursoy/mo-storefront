@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Codebase Overview
 
 **mo-storefront** is an Nx monorepo for building a modern storefront application with:
+
 - **Frontend**: Next.js 16 application with Tailwind CSS v4 and Shadcn UI components (`apps/storefront`)
 - **E2E Tests**: Playwright test suite (`apps/storefront-e2e`)
 - **Backend (Planned)**: Federated GraphQL API with NestJS subgraphs (`apps/api-*`)
@@ -57,6 +58,7 @@ npx nx graph --watch
 ### Pre-commit Hooks
 
 The repo uses Husky with pre-commit hooks that automatically:
+
 - Format code with `format:write`
 - Run linting
 - Run tests
@@ -115,14 +117,17 @@ mo-storefront/
 **For new features, always:**
 
 1. **Create spec**: Use `/spec "feature description"` to:
+
    - Generate `_specs/<feature_slug>/spec.md` with requirements
    - Create a new feature branch
 
 2. **Create plan**: Use `/plan` to:
+
    - Generate `_specs/<feature_slug>/plan.md` with numbered checkpoints
    - Generate `_specs/<feature_slug>/todos.md` for progress tracking
 
 3. **Implement by checkpoint**:
+
    - Work through plan sequentially
    - After each checkpoint: mark todos complete, add notes, commit
    - Update todos.md review section with observations
@@ -142,6 +147,7 @@ mo-storefront/
 ### 4. Task Management Pattern
 
 **After EVERY checkpoint or section completion:**
+
 - Update `_specs/<feature_slug>/todos.md` with `[x]` marks
 - Add brief notes on what was accomplished
 - Include unexpected findings or learnings
@@ -170,6 +176,7 @@ Co-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>
 ```
 
 **Emoji conventions:**
+
 - ✨ `feat:` - New feature or functionality
 - 🐛 `fix:` - Bug fix
 - 🔧 `chore:` - Tooling, configuration, dependencies
@@ -182,6 +189,7 @@ Co-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>
 ### Branch Naming
 
 Feature branches use pattern: `feature/<feature-slug>`
+
 - Example: `feature/graphql-api`, `feature/nextjs-app-tailwind-shadcn`
 
 ## Nx Workspace Guidelines
@@ -195,11 +203,13 @@ Feature branches use pattern: `feature/<feature-slug>`
 ### Project Targets
 
 **Storefront app** (`apps/storefront`):
+
 - `build` - Production build (Next.js)
 - `serve` / `dev` - Dev server (http://localhost:3000)
 - `typecheck` - TypeScript validation
 
 **Storefront E2E** (`apps/storefront-e2e`):
+
 - `e2e` - Run Playwright tests
 
 ### Advanced Patterns
@@ -237,6 +247,7 @@ npx nx graph
 ### Pre-commit Validation
 
 The Husky pre-commit hook runs:
+
 1. `format:write` - Auto-formats code
 2. `lint` - Linting checks (if configured)
 3. `test` - Test execution
@@ -255,6 +266,7 @@ The Husky pre-commit hook runs:
 ### App-Specific Overrides
 
 **Storefront** (`apps/storefront/tsconfig.json`):
+
 - `module: "esnext"` - Bundler-compatible
 - `moduleResolution: "bundler"`
 - `jsx: "preserve"` - For Next.js JSX handling
@@ -268,11 +280,13 @@ The Husky pre-commit hook runs:
 ## Tailwind CSS v4
 
 **Configuration**: `apps/storefront/tailwind.config.js`
+
 - Uses `@tailwindcss/postcss` (v4 syntax)
 - CSS variables for theming
 - Integrates with Shadcn UI components
 
 **Global styles**: `apps/storefront/app/global.css`
+
 ```css
 @tailwind base;
 @tailwind components;
@@ -282,11 +296,13 @@ The Husky pre-commit hook runs:
 ## Shadcn UI Components
 
 **Location**: `apps/storefront/components/ui/`
+
 - Pre-built accessible components
 - Styled with Tailwind CSS
 - Use `cn()` utility (from `lib/utils.ts`) for class merging
 
 **Adding components**:
+
 ```bash
 cd apps/storefront
 npx shadcn@latest add <component-name>
@@ -299,12 +315,14 @@ npx shadcn@latest add <component-name>
 **Architecture**: Apollo Federation v2 with independent NestJS subgraphs
 
 **Services**:
+
 - `apps/api-gateway` (Port 3300) - Apollo Gateway, main entry point
 - `apps/api-product` (Port 3301) - Product catalog queries
 - `apps/api-cart` (Port 3302) - Cart management
 - `apps/api-order` (Port 3303) - Order processing
 
 **Features**:
+
 - Each subgraph has independent PostgreSQL database
 - JWT authentication across all services
 - DataLoader for N+1 query prevention
@@ -317,6 +335,7 @@ npx shadcn@latest add <component-name>
 **Workflow**: `.github/workflows/ci.yml`
 
 Runs on push to main and pull requests:
+
 1. `npm ci` - Clean install dependencies
 2. `npx nx format:check` - Verify code formatting
 3. `npx nx run-many -t lint test typecheck build e2e` - Comprehensive checks

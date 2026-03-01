@@ -9,28 +9,33 @@ Add a GraphQL API server to the mo-storefront monorepo to enable flexible data q
 ## Functional Requirements
 
 1. **GraphQL Server Setup**
+
    - Create a GraphQL API server (Apollo Server or similar) in the Nx workspace
    - Configure schema with product, cart, and order types
    - Set up resolvers for querying and mutating data
    - Enable schema introspection for development
 
 2. **Product Operations**
+
    - Query all products with filtering (category, price range, search)
    - Query individual product by ID with related items
    - Pagination support for product lists
 
 3. **Cart Management**
+
    - Add/remove items to cart
    - Update item quantities
    - Get current cart state
    - Calculate totals and shipping
 
 4. **Order Processing**
+
    - Create orders from cart
    - Query order history
    - Track order status
 
 5. **Authentication & Authorization**
+
    - Protect mutations with authentication (JWT/session)
    - Role-based access control for admin operations
 

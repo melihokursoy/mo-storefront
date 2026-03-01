@@ -3,26 +3,31 @@
 ## Phase 1: Core Infrastructure
 
 ### Checkpoint 1: Nx/Nest Plugin Installed
+
 - [ ] Install @nx/nest plugin
 - [ ] Verify plugin installation
 
 ### Checkpoint 2: Apollo Gateway Generated
+
 - [ ] Generate NestJS app at apps/api-gateway
 - [ ] Verify gateway app structure
 
 ### Checkpoint 3: All Subgraphs Generated
+
 - [ ] Generate Product subgraph at apps/api-product
 - [ ] Generate Cart subgraph at apps/api-cart
 - [ ] Generate Order subgraph at apps/api-order
 - [ ] Verify all subgraph structures
 
 ### Checkpoint 4: Federation Dependencies Installed
+
 - [ ] Install @apollo/gateway, @apollo/subgraph, @nestjs/graphql, apollo-server
 - [ ] Verify all dependencies installed across workspace
 
 ## Phase 2: Gateway Setup
 
 ### Checkpoint 5: Apollo Gateway Configured
+
 - [ ] Configure ApolloGatewayDriver in api-gateway app.module.ts
 - [ ] List all subgraph URLs (localhost:3001, 3002, 3003)
 - [ ] Enable introspection for development
@@ -32,14 +37,16 @@
 ## Phase 3: Product Subgraph
 
 ### Checkpoint 6: Product Subgraph Configured
+
 - [ ] Configure ApolloFederationDriver in api-product app.module.ts
 - [ ] Set port to 3001
 - [ ] Enable autoSchemaFile for code-first federation
 - [ ] Verify subgraph startup
 
 ### Checkpoint 7: Product Entity & Resolvers
+
 - [ ] Create Product @ObjectType with @Directive('@key(fields: "id")')
-- [ ] Implement __resolveReference for Product entity
+- [ ] Implement \_\_resolveReference for Product entity
 - [ ] Create ProductResolver with:
   - [ ] products(filter, limit, offset) query
   - [ ] product(id) query
@@ -49,12 +56,13 @@
 ## Phase 4: Cart Subgraph
 
 ### Checkpoint 8: Cart Subgraph with Product References
+
 - [ ] Configure ApolloFederationDriver in api-cart app.module.ts
 - [ ] Set port to 3002
 - [ ] Create Cart @ObjectType with @Directive('@key(fields: "id")')
 - [ ] Create CartItem @ObjectType with Product reference
 - [ ] Extend Product entity from Product subgraph
-- [ ] Implement __resolveReference for Cart entity
+- [ ] Implement \_\_resolveReference for Cart entity
 - [ ] Create CartResolver with:
   - [ ] cart query (authenticated)
   - [ ] addToCart(productId, quantity) mutation
@@ -65,13 +73,14 @@
 ## Phase 5: Order Subgraph
 
 ### Checkpoint 9: Order Subgraph with References
+
 - [ ] Configure ApolloFederationDriver in api-order app.module.ts
 - [ ] Set port to 3003
 - [ ] Create Order @ObjectType with @Directive('@key(fields: "id")')
 - [ ] Create OrderItem @ObjectType with Product reference
 - [ ] Extend Product entity from Product subgraph
 - [ ] Extend Cart entity from Cart subgraph
-- [ ] Implement __resolveReference for Order entity
+- [ ] Implement \_\_resolveReference for Order entity
 - [ ] Create OrderResolver with:
   - [ ] createOrder(cartId) mutation
   - [ ] orders query (authenticated)
@@ -82,6 +91,7 @@
 ## Phase 6: Authentication & Cross-Subgraph Communication
 
 ### Checkpoint 10: JWT Authentication Configured
+
 - [ ] Install @nestjs/jwt, @nestjs/passport, passport, passport-jwt in each subgraph
 - [ ] Create JwtStrategy in each subgraph
 - [ ] Create AuthGuard in each subgraph
@@ -89,15 +99,17 @@
 - [ ] Test protected mutations fail without token
 
 ### Checkpoint 11: Entity References Configured
-- [ ] Implement __resolveReference in Product subgraph
-- [ ] Implement __resolveReference in Cart subgraph
-- [ ] Implement __resolveReference in Order subgraph
+
+- [ ] Implement \_\_resolveReference in Product subgraph
+- [ ] Implement \_\_resolveReference in Cart subgraph
+- [ ] Implement \_\_resolveReference in Order subgraph
 - [ ] Test nested entity resolution across subgraphs
 - [ ] Verify no reference resolution errors in gateway
 
 ## Phase 7: Performance & Monitoring
 
 ### Checkpoint 12: DataLoader Integrated
+
 - [ ] Install dataloader in each subgraph
 - [ ] Implement DataLoader for Product batch loading
 - [ ] Implement DataLoader for Cart references
@@ -105,6 +117,7 @@
 - [ ] Verify no N+1 queries in federation queries
 
 ### Checkpoint 13: Query Complexity Validation
+
 - [ ] Configure query complexity analysis in gateway
 - [ ] Configure complexity checks in each subgraph
 - [ ] Reject queries exceeding complexity threshold
@@ -113,6 +126,7 @@
 ## Phase 8: Databases
 
 ### Checkpoint 14: Databases Initialized
+
 - [ ] Initialize Prisma in each subgraph (api-product, api-cart, api-order)
 - [ ] Configure unique DATABASE_URL for each subgraph in .env.local
 - [ ] Define schema for Product subgraph (products, categories)
@@ -124,16 +138,18 @@
 ## Phase 9: Testing
 
 ### Checkpoint 15: Subgraph Tests Pass
+
 - [ ] Write unit tests for Product resolver (queries)
 - [ ] Write unit tests for Cart resolver (mutations, references)
 - [ ] Write unit tests for Order resolver (mutations, references)
-- [ ] Write tests for __resolveReference implementations
+- [ ] Write tests for \_\_resolveReference implementations
 - [ ] Run: npx nx test api-product
 - [ ] Run: npx nx test api-cart
 - [ ] Run: npx nx test api-order
 - [ ] All subgraph tests pass
 
 ### Checkpoint 16: Integration Tests Pass
+
 - [ ] Write federation e2e test: browse products query
 - [ ] Write federation e2e test: add to cart (cart → product reference)
 - [ ] Write federation e2e test: create order (order → product + cart references)
@@ -162,15 +178,19 @@
 _Observations from implementation:_
 
 - [ ] What went smoothly?
+
   - ...
 
 - [ ] What was unexpected?
+
   - ...
 
 - [ ] Any improvements to the plan?
+
   - ...
 
 - [ ] Federation-specific challenges?
+
   - ...
 
 - [ ] Performance improvements from federation?

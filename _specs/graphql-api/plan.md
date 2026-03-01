@@ -44,6 +44,7 @@ The mo-storefront monorepo needs a scalable, federated GraphQL API architecture 
 ```
 
 **Each subgraph**:
+
 - Independent NestJS service
 - Own PostgreSQL database
 - Runs on unique port
@@ -62,6 +63,7 @@ npx nx add @nx/nest
 **✅ Checkpoint 1: Nx/Nest Plugin Installed**
 
 Verify:
+
 ```sh
 npm list @nx/nest
 npx nx list @nx/nest
@@ -80,6 +82,7 @@ npx nx generate @nx/nest:app --name=api-gateway --directory=apps/api-gateway --f
 **✅ Checkpoint 2: Apollo Gateway Generated**
 
 Verify:
+
 ```sh
 ls -la apps/api-gateway/
 ```
@@ -91,16 +94,19 @@ ls -la apps/api-gateway/
 Generate three independent NestJS services:
 
 **Product Subgraph**:
+
 ```sh
 npx nx generate @nx/nest:app --name=api-product --directory=apps/api-product
 ```
 
 **Cart Subgraph**:
+
 ```sh
 npx nx generate @nx/nest:app --name=api-cart --directory=apps/api-cart
 ```
 
 **Order Subgraph**:
+
 ```sh
 npx nx generate @nx/nest:app --name=api-order --directory=apps/api-order
 ```
@@ -108,6 +114,7 @@ npx nx generate @nx/nest:app --name=api-order --directory=apps/api-order
 **✅ Checkpoint 3: All Subgraphs Generated**
 
 Verify:
+
 ```sh
 ls -la apps/api-*/
 ```
@@ -126,6 +133,7 @@ npm install --save-dev @types/graphql
 **✅ Checkpoint 4: Federation Dependencies Installed**
 
 Verify:
+
 ```sh
 npm list @apollo/gateway @apollo/subgraph @nestjs/graphql
 ```
@@ -139,23 +147,26 @@ npm list @apollo/gateway @apollo/subgraph @nestjs/graphql
 **File**: `apps/api-gateway/src/app.module.ts`
 
 Setup `ApolloGatewayDriver`:
+
 - List all subgraph URLs (local dev ports)
 - Enable introspection
 - Configure authentication context
 - Setup CORS for storefront
 
 **Configuration**:
+
 ```typescript
 subgraphs: [
   { name: 'product', url: 'http://localhost:3301/graphql' },
   { name: 'cart', url: 'http://localhost:3302/graphql' },
-  { name: 'order', url: 'http://localhost:3303/graphql' }
-]
+  { name: 'order', url: 'http://localhost:3303/graphql' },
+];
 ```
 
 **✅ Checkpoint 5: Apollo Gateway Configured**
 
 Verify:
+
 ```sh
 npx nx serve api-gateway
 # Open http://localhost:3300/graphql (Apollo Sandbox)
@@ -171,6 +182,7 @@ npx nx serve api-gateway
 **File**: `apps/api-product/package.json`
 
 Add federation-specific dependencies:
+
 ```sh
 npm install @apollo/subgraph
 ```
@@ -182,11 +194,13 @@ npm install @apollo/subgraph
 **File**: `apps/api-product/src/app.module.ts`
 
 Configure `ApolloFederationDriver`:
+
 - Enable federation mode
 - Set autoSchemaFile for code-first
 - Port: 3301
 
 **Key Settings**:
+
 ```typescript
 driver: ApolloFederationDriver,
 autoSchemaFile: 'product-schema.gql',
@@ -198,6 +212,7 @@ buildSchemaOptions: {
 **✅ Checkpoint 6: Product Subgraph Configured**
 
 Verify:
+
 ```sh
 npx nx serve api-product
 # http://localhost:3301/graphql should be accessible
@@ -208,10 +223,12 @@ npx nx serve api-product
 #### 8. Define Product Entity & Resolvers
 
 **Files**:
+
 - `apps/api-product/src/product.entity.ts`
 - `apps/api-product/src/product.resolver.ts`
 
 **Entity**: Product with @Directive for federation:
+
 ```typescript
 @ObjectType()
 @Directive('@key(fields: "id")')
@@ -229,6 +246,7 @@ export class Product {
 ```
 
 **Resolvers**:
+
 - `products(filter, limit, offset)` → [Product]
 - `product(id)` → Product
 - `__resolveReference` for entity reference resolution
@@ -236,6 +254,7 @@ export class Product {
 **✅ Checkpoint 7: Product Entity & Resolvers**
 
 Verify:
+
 ```sh
 npx nx serve api-product
 # Query in Apollo Sandbox:
@@ -257,6 +276,7 @@ query {
 **File**: `apps/api-cart/src/app.module.ts`
 
 Configure `ApolloFederationDriver`:
+
 - Port: 3302
 
 ---
@@ -288,14 +308,14 @@ export class CartItem {
   id: string;
 
   @Field(() => Product)
-  product: Product;  // Reference to Product subgraph entity
+  product: Product; // Reference to Product subgraph entity
 
   @Field()
   quantity: number;
 }
 
 @ObjectType()
-@Extends()  // Reference external Product entity
+@Extends() // Reference external Product entity
 @Directive('@external')
 export class Product {
   @Field(() => ID)
@@ -309,6 +329,7 @@ export class Product {
 ```
 
 **Resolvers**:
+
 - `cart` → Cart (authenticated)
 - `addToCart(productId, quantity)` → Cart
 - `removeFromCart(cartItemId)` → Cart
@@ -317,6 +338,7 @@ export class Product {
 **✅ Checkpoint 8: Cart Subgraph with Product References**
 
 Verify:
+
 ```sh
 npx nx serve api-product & npx nx serve api-cart
 # Test cart queries in Apollo Sandbox
@@ -331,6 +353,7 @@ npx nx serve api-product & npx nx serve api-cart
 **File**: `apps/api-order/src/app.module.ts`
 
 Configure `ApolloFederationDriver`:
+
 - Port: 3303
 
 ---
@@ -365,7 +388,7 @@ export class OrderItem {
   id: string;
 
   @Field(() => Product)
-  product: Product;  // Reference to Product subgraph
+  product: Product; // Reference to Product subgraph
 
   @Field()
   quantity: number;
@@ -395,6 +418,7 @@ export class Cart {
 ```
 
 **Resolvers**:
+
 - `createOrder(cartId)` → Order
 - `orders` → [Order] (authenticated)
 - `order(id)` → Order
@@ -403,6 +427,7 @@ export class Cart {
 **✅ Checkpoint 9: Order Subgraph with References**
 
 Verify:
+
 ```sh
 # Start all subgraphs
 npx nx serve api-product &
@@ -421,15 +446,18 @@ npx nx serve api-gateway
 #### 13. Setup JWT Authentication Across Subgraphs
 
 Install in each subgraph:
+
 ```sh
 npm install @nestjs/jwt @nestjs/passport passport passport-jwt
 ```
 
 **For Gateway**:
+
 - Extract JWT from Authorization header
 - Pass token to each subgraph via context headers
 
 **For Subgraphs**:
+
 - Validate JWT independently
 - Extract userId from token
 - Protect mutations
@@ -437,6 +465,7 @@ npm install @nestjs/jwt @nestjs/passport passport passport-jwt
 **✅ Checkpoint 10: JWT Authentication Configured**
 
 Verify:
+
 ```sh
 # All subgraphs validate tokens independently
 # Gateway passes token context to subgraphs
@@ -449,6 +478,7 @@ Verify:
 Each subgraph must implement `__resolveReference` for entities it extends:
 
 **Example (Cart resolving Product reference)**:
+
 ```typescript
 @ResolveReference()
 resolveProductReference(reference: Pick<Product, 'id'>) {
@@ -460,6 +490,7 @@ resolveProductReference(reference: Pick<Product, 'id'>) {
 **✅ Checkpoint 11: Entity References Configured**
 
 Verify:
+
 ```sh
 # Query nested entities across subgraphs
 query {
@@ -482,6 +513,7 @@ query {
 #### 15. Implement Entity Batching & DataLoader
 
 Prevent N+1 queries across subgraph boundaries:
+
 - DataLoader in Product subgraph for batch product fetching
 - DataLoader in Cart subgraph for batch product references
 - DataLoader in Order subgraph for batch product/cart references
@@ -489,6 +521,7 @@ Prevent N+1 queries across subgraph boundaries:
 **✅ Checkpoint 12: DataLoader Integrated**
 
 Verify:
+
 ```sh
 # Query orders with nested products (no N+1 queries)
 ```
@@ -498,12 +531,14 @@ Verify:
 #### 16. Add Query Complexity Analysis
 
 Prevent malicious deep federation queries:
+
 - Gateway enforces complexity limits
 - Each subgraph also validates
 
 **✅ Checkpoint 13: Query Complexity Validation**
 
 Verify:
+
 ```sh
 # Deep nested queries fail gracefully
 ```
@@ -515,6 +550,7 @@ Verify:
 #### 17. Setup Prisma for Each Subgraph
 
 Initialize Prisma in each subgraph:
+
 ```sh
 # For each subgraph
 npx prisma init
@@ -522,11 +558,13 @@ npx prisma init
 ```
 
 **Database per subgraph**:
+
 - Product DB: products, product_categories
 - Cart DB: carts, cart_items
 - Order DB: orders, order_items
 
 **Migration**:
+
 ```sh
 npx prisma migrate dev --name init  # In each subgraph directory
 ```
@@ -534,6 +572,7 @@ npx prisma migrate dev --name init  # In each subgraph directory
 **✅ Checkpoint 14: Databases Initialized**
 
 Verify:
+
 ```sh
 npx prisma studio  # In each subgraph
 ```
@@ -545,6 +584,7 @@ npx prisma studio  # In each subgraph
 #### 18. Write Subgraph Unit Tests
 
 **For each subgraph**:
+
 - Entity resolution tests
 - Mutation tests
 - Reference resolution tests
@@ -558,6 +598,7 @@ npx nx test api-order
 **✅ Checkpoint 15: Subgraph Tests Pass**
 
 Verify:
+
 ```sh
 # All subgraph tests pass
 ```
@@ -569,6 +610,7 @@ Verify:
 **File**: `tests/graphql-api/federation-e2e.test.ts`
 
 Test scenarios:
+
 1. Query products through gateway
 2. Add to cart (cart subgraph fetches product via reference)
 3. Create order (order subgraph fetches product + cart via references)
@@ -588,6 +630,7 @@ node --experimental-strip-types --test tests/graphql-api/federation-e2e.test.ts
 **✅ Checkpoint 16: Integration Tests Pass**
 
 Verify:
+
 ```sh
 # Complete federation flow works end-to-end
 ```
@@ -619,6 +662,7 @@ node --experimental-strip-types --test tests/graphql-api/federation-e2e.test.ts
 ### Performance Baseline
 
 Target:
+
 - Query response time: < 200ms (typical product query)
 - Cross-subgraph query: < 500ms (order with nested products)
 - No N+1 queries (verify with DataLoader)
@@ -627,17 +671,17 @@ Target:
 
 ## Critical Files
 
-| File | Purpose |
-|------|---------|
-| `apps/api-gateway/src/app.module.ts` | Apollo Gateway configuration |
-| `apps/api-product/src/app.module.ts` | Product subgraph federation setup |
-| `apps/api-product/src/product.resolver.ts` | Product queries and references |
-| `apps/api-cart/src/app.module.ts` | Cart subgraph federation setup |
-| `apps/api-cart/src/cart.resolver.ts` | Cart mutations and product references |
-| `apps/api-order/src/app.module.ts` | Order subgraph federation setup |
-| `apps/api-order/src/order.resolver.ts` | Order mutations and references |
-| `prisma/schema.prisma` | Database schemas (one per subgraph) |
-| `tests/graphql-api/federation-e2e.test.ts` | End-to-end federation tests |
+| File                                       | Purpose                               |
+| ------------------------------------------ | ------------------------------------- |
+| `apps/api-gateway/src/app.module.ts`       | Apollo Gateway configuration          |
+| `apps/api-product/src/app.module.ts`       | Product subgraph federation setup     |
+| `apps/api-product/src/product.resolver.ts` | Product queries and references        |
+| `apps/api-cart/src/app.module.ts`          | Cart subgraph federation setup        |
+| `apps/api-cart/src/cart.resolver.ts`       | Cart mutations and product references |
+| `apps/api-order/src/app.module.ts`         | Order subgraph federation setup       |
+| `apps/api-order/src/order.resolver.ts`     | Order mutations and references        |
+| `prisma/schema.prisma`                     | Database schemas (one per subgraph)   |
+| `tests/graphql-api/federation-e2e.test.ts` | End-to-end federation tests           |
 
 ---
 
@@ -646,6 +690,7 @@ Target:
 Build a production-ready federated GraphQL API with Apollo Federation v2, featuring an Apollo Gateway coordinating three independent NestJS subgraphs (Product, Cart, Order), each with its own PostgreSQL database, across 16 checkpoints covering infrastructure, subgraph setup, federation directives, authentication, performance, and comprehensive testing.
 
 **Key Benefits**:
+
 - ✅ Scalable: Teams own separate subgraphs
 - ✅ Independent: Each subgraph has own database and deployment
 - ✅ Unified: Single GraphQL endpoint for clients
