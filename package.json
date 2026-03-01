@@ -55,6 +55,7 @@
     "@nx/nest": "^22.5.3",
     "apollo-server": "^3.13.0",
     "axios": "^1.6.0",
+    "dataloader": "^2.2.3",
     "graphql": "^16.13.0",
     "next": "~16.0.1",
     "passport": "^0.7.0",

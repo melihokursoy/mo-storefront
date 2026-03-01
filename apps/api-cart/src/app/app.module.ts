@@ -10,6 +10,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CartResolver } from './cart.resolver';
 import { CartService } from './cart.service';
+import { CartDataLoader } from './cart.dataloader';
 import { Cart } from './cart.entity';
 import { JwtStrategy } from './auth/jwt.strategy';
 
@@ -31,6 +32,12 @@ import { JwtStrategy } from './auth/jwt.strategy';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, CartResolver, CartService, JwtStrategy],
+  providers: [
+    AppService,
+    CartResolver,
+    CartService,
+    CartDataLoader,
+    JwtStrategy,
+  ],
 })
 export class AppModule {}

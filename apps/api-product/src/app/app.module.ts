@@ -10,6 +10,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductResolver } from './product.resolver';
 import { ProductService } from './product.service';
+import { ProductDataLoader } from './product.dataloader';
 import { Product } from './product.entity';
 import { JwtStrategy } from './auth/jwt.strategy';
 
@@ -31,6 +32,12 @@ import { JwtStrategy } from './auth/jwt.strategy';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, ProductResolver, ProductService, JwtStrategy],
+  providers: [
+    AppService,
+    ProductResolver,
+    ProductService,
+    ProductDataLoader,
+    JwtStrategy,
+  ],
 })
 export class AppModule {}
