@@ -11,6 +11,12 @@
 - [x] Verify flat directory structure (no `src/` folder)
 - [x] Update `apps/storefront/tsconfig.json` with correct module/moduleResolution overrides
 
+## TypeScript Configuration
+- [x] Verify `apps/storefront/tsconfig.json` has correct module/moduleResolution
+- [x] Verify jsx set to preserve for Next.js
+- [x] Verify @/* path alias configured
+- [x] Run TypeScript compilation - succeeds
+
 ## Tailwind CSS Configuration
 - [x] Create `apps/storefront/tailwind.config.js`
 - [x] Create `apps/storefront/postcss.config.js`
@@ -90,3 +96,10 @@ _Observations from implementation:_
 - ✓ Updated PostCSS config to use new plugin
 - ✓ Simplified tailwind.config.js for v4 (removed theme/plugins sections)
 - ✓ Build succeeds with Tailwind directives processing correctly
+
+## Checkpoint 4 Notes
+- ✓ @nx/next generator automatically configured TypeScript perfectly
+- ✓ All required settings already in place (jsx:preserve, module:esnext, moduleResolution:bundler)
+- ✓ Path alias @/* already configured and working
+- ✓ TypeScript compilation successful (npx tsc --noEmit passes)
+- ✓ No manual configuration needed - generator handles all requirements
