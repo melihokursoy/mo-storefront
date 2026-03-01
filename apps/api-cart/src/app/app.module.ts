@@ -6,6 +6,9 @@ import {
 } from '@nestjs/apollo';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CartResolver } from './cart.resolver';
+import { CartService } from './cart.service';
+import { Cart } from './cart.entity';
 
 @Module({
   imports: [
@@ -15,11 +18,11 @@ import { AppService } from './app.service';
         federation: 2,
       },
       buildSchemaOptions: {
-        orphanedTypes: [],
+        orphanedTypes: [Cart],
       },
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, CartResolver, CartService],
 })
 export class AppModule {}

@@ -55,20 +55,21 @@
 
 ## Phase 4: Cart Subgraph
 
-### Checkpoint 8: Cart Subgraph with Product References
+### Checkpoint 8: Cart Subgraph with Product References ✅ COMPLETE
 
 - [x] Configure ApolloFederationDriver in api-cart app.module.ts ✅
 - [x] Set port to 3302 ✅
-- [ ] Create Cart @ObjectType with @Directive('@key(fields: "id")')
-- [ ] Create CartItem @ObjectType with Product reference
-- [ ] Extend Product entity from Product subgraph
-- [ ] Implement \_\_resolveReference for Cart entity
-- [ ] Create CartResolver with:
-  - [ ] cart query (authenticated)
-  - [ ] addToCart(productId, quantity) mutation
-  - [ ] removeFromCart(cartItemId) mutation
-  - [ ] updateCartItem(cartItemId, quantity) mutation
-- [ ] Test cart queries/mutations with product references
+- [x] Create Cart @ObjectType with @Directive('@key(fields: "id")')
+- [x] Create CartItem @ObjectType with Product reference
+- [x] Extend Product entity from Product subgraph (ExternalProduct)
+- [x] Implement \_\_resolveReference for Cart entity
+- [x] Create CartResolver with:
+  - [x] cart query (uses context.userId)
+  - [x] addToCart(productId, quantity, productPrice, productName) mutation
+  - [x] removeFromCart(cartItemId) mutation
+  - [x] updateCartItem(cartItemId, quantity) mutation
+  - [x] clearCart() mutation
+- [x] CartService with mock database and recalculation logic
 
 ## Phase 5: Order Subgraph
 
@@ -280,7 +281,29 @@ _Observations from implementation:_
 - ✓ Created ProductResolver (product.resolver.ts) with:
   - products(limit, offset, category, minPrice, maxPrice, search) query
   - product(id) query
-  - __resolveReference() for entity reference resolution
+  - \_\_resolveReference() for entity reference resolution
 - ✓ Updated ProductModule to include ProductResolver and ProductService
 - ✓ TypeScript compilation verified
 - ✓ Ready to test with gateway and implement Cart entity (Checkpoint 8)
+
+## Checkpoint 8 Notes
+
+- ✓ Created Cart entity (cart.entity.ts) with @ObjectType and @Directive('@key(fields: "id")')
+- ✓ Created CartItem @ObjectType with:
+  - id, product (ExternalProduct reference), quantity, subtotal
+- ✓ Created ExternalProduct @ObjectType with @Directive('@external') for federation
+- ✓ Cart fields: id, userId, items, totalPrice, itemCount, createdAt, updatedAt
+- ✓ Created CartService (cart.service.ts) with:
+  - Mock cart database (one sample cart for user-1)
+  - getCart, getOrCreateCart, addToCart, removeFromCart, updateCartItem, clearCart
+  - Automatic price recalculation with totalPrice and itemCount
+- ✓ Created CartResolver (cart.resolver.ts) with:
+  - cart() query (context-based userId)
+  - addToCart() mutation (accepts productId, quantity, productPrice, productName)
+  - removeFromCart() mutation (accepts cartItemId)
+  - updateCartItem() mutation (accepts cartItemId, quantity)
+  - clearCart() mutation
+  - __resolveReference() for entity reference resolution
+- ✓ Updated CartModule to include CartResolver and CartService
+- ✓ TypeScript compilation verified
+- ✓ Ready to implement Order entity (Checkpoint 9)

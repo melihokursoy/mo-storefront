@@ -13,7 +13,7 @@ export class ProductResolver {
     @Args('category', { nullable: true }) category?: string,
     @Args('minPrice', { type: () => Number, nullable: true }) minPrice?: number,
     @Args('maxPrice', { type: () => Number, nullable: true }) maxPrice?: number,
-    @Args('search', { nullable: true }) search?: string,
+    @Args('search', { nullable: true }) search?: string
   ): Promise<Product[]> {
     return this.productService.findAll({
       limit,
