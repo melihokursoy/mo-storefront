@@ -136,7 +136,15 @@ export class CartService {
       include: { items: true },
     });
 
-    return this.toGraphQL(updated || { id: '', userId, items: [], createdAt: new Date(), updatedAt: new Date() });
+    return this.toGraphQL(
+      updated || {
+        id: '',
+        userId,
+        items: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    );
   }
 
   async updateCartItem(
@@ -171,7 +179,15 @@ export class CartService {
       include: { items: true },
     });
 
-    return this.toGraphQL(updated || { id: '', userId, items: [], createdAt: new Date(), updatedAt: new Date() });
+    return this.toGraphQL(
+      updated || {
+        id: '',
+        userId,
+        items: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    );
   }
 
   async clearCart(userId: string): Promise<Cart> {
@@ -195,7 +211,15 @@ export class CartService {
       include: { items: true },
     });
 
-    return this.toGraphQL(updated || { id: '', userId, items: [], createdAt: new Date(), updatedAt: new Date() });
+    return this.toGraphQL(
+      updated || {
+        id: '',
+        userId,
+        items: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    );
   }
 
   async findById(cartId: string): Promise<Cart | null> {

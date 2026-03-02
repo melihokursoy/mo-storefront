@@ -148,7 +148,10 @@ describe('CartResolver', () => {
       const context = { userId: 'user-1' };
       const result = await resolver.removeFromCart('item-1', context);
 
-      expect(mockCartService.removeFromCart).toHaveBeenCalledWith('user-1', 'item-1');
+      expect(mockCartService.removeFromCart).toHaveBeenCalledWith(
+        'user-1',
+        'item-1'
+      );
       expect(result).toEqual(mockCart);
     });
   });

@@ -2,7 +2,9 @@ import { PrismaClient } from '../src/generated/prisma';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 
-const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5433/cart_db';
+const connectionString =
+  process.env.DATABASE_URL ||
+  'postgresql://postgres:postgres@localhost:5433/cart_db';
 
 async function main() {
   console.log('Seeding cart database...');
@@ -46,8 +48,7 @@ async function main() {
   }
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

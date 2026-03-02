@@ -7,7 +7,11 @@ export default {
       '@swc/jest',
       {
         jsc: {
-          parser: { syntax: 'typescript', decorators: true, dynamicImport: true },
+          parser: {
+            syntax: 'typescript',
+            decorators: true,
+            dynamicImport: true,
+          },
           transform: { decoratorMetadata: true, legacyDecorator: true },
           keepClassNames: true,
           externalHelpers: true,
