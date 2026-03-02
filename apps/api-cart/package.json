@@ -86,6 +86,9 @@
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0"
   },
+  "scripts": {
+    "test": "npx jest --config jest.config.ts"
+  },
   "devDependencies": {
     "@nestjs/testing": "^11.0.0"
   }

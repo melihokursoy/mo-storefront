@@ -10,7 +10,7 @@
     "target": "es2021"
   },
   "include": ["src/**/*.ts"],
-  "exclude": [],
+  "exclude": ["src/**/*.spec.ts"],
   "references": [
     {
       "path": "../../packages/graphql-complexity"
