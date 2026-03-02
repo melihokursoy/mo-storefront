@@ -506,7 +506,7 @@ _Observations from implementation:_
 - ✓ Created jest.config.ts for each subgraph with SWC transformer
   - Configured @swc/jest with decoratorMetadata and legacyDecorator support
   - Set testEnvironment to 'node'
-  - testMatch pattern: **/*.spec.ts
+  - testMatch pattern: \*_/_.spec.ts
 - ✓ Created tsconfig.spec.json for each subgraph with Jest types
 - ✓ Updated tsconfig.app.json for each subgraph to exclude .spec.ts files from typecheck
 - ✓ Added @nx/jest, jest, @swc/jest, jest-environment-node to root devDependencies
@@ -515,10 +515,12 @@ _Observations from implementation:_
 **Test Coverage Completed: 60 tests across 6 test suites**
 
 - ✓ api-product: 17 tests (2 suites)
+
   - ProductService: findAll (7 tests), findById (3 tests)
   - ProductResolver: products query, product query, resolveReference (7 tests)
 
 - ✓ api-cart: 21 tests (2 suites)
+
   - CartService: getCart, getOrCreateCart, addToCart, removeFromCart, updateCartItem, clearCart, findById (14 tests)
   - CartResolver: cart query, mutations, resolveReference (7 tests)
 
@@ -527,12 +529,14 @@ _Observations from implementation:_
   - OrderResolver: order queries, mutations, resolveReference (10 tests)
 
 **Test Verification:**
+
 - ✓ All 60 tests passing
 - ✓ TypeScript typecheck passing (excluded .spec.ts from app config)
 - ✓ Pre-commit hooks passing (format, lint, test, typecheck)
-- ✓ Test coverage includes: service methods, resolver queries/mutations, __resolveReference, null/not-found cases, data transformation
+- ✓ Test coverage includes: service methods, resolver queries/mutations, \_\_resolveReference, null/not-found cases, data transformation
 
 **Key Design Decisions:**
+
 - PrismaService mocked in tests with jest.fn() for all methods
 - Guard mocking: JwtAuthGuard overridden with { canActivate: jest.fn(() => true) }
 - Context handling: Tests verify both explicit userId and 'user-1' fallback
