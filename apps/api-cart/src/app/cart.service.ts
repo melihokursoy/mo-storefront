@@ -1,58 +1,66 @@
 import { Injectable } from '@nestjs/common';
 import { Cart } from './cart.entity';
-import { randomUUID } from 'crypto';
-
-// Mock cart database
-interface CartDB {
-  [key: string]: Cart;
-}
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class CartService {
-  private carts: CartDB = {
-    'cart-user-1': {
-      id: 'cart-user-1',
-      userId: 'user-1',
-      items: [
-        {
-          id: 'item-1',
-          product: { id: '1', name: 'Wireless Headphones', price: 129.99 },
-          quantity: 1,
-          subtotal: 129.99,
-        },
-        {
-          id: 'item-2',
-          product: { id: '3', name: 'Laptop Stand', price: 49.99 },
-          quantity: 2,
-          subtotal: 99.98,
-        },
-      ],
-      totalPrice: 229.97,
-      itemCount: 3,
-      createdAt: '2024-01-10T00:00:00Z',
-      updatedAt: '2024-01-10T00:00:00Z',
-    },
-  };
+  constructor(private prisma: PrismaService) {}
+
+  private toGraphQL(cart: any): Cart {
+    const items = (cart.items || []).map((item: any) => ({
+      id: item.id,
+      product: {
+        id: item.productId,
+        name: item.productName,
+        price: item.productPrice,
+      },
+      quantity: item.quantity,
+      subtotal: item.quantity * item.productPrice,
+    }));
+
+    const totalPrice = items.reduce(
+      (sum: number, item: any) => sum + item.subtotal,
+      0
+    );
+    const itemCount = items.reduce(
+      (sum: number, item: any) => sum + item.quantity,
+      0
+    );
+
+    return {
+      id: cart.id,
+      userId: cart.userId,
+      items,
+      totalPrice,
+      itemCount,
+      createdAt: cart.createdAt.toISOString(),
+      updatedAt: cart.updatedAt.toISOString(),
+    };
+  }
 
   async getCart(userId: string): Promise<Cart | null> {
-    const cartId = `cart-${userId}`;
-    return this.carts[cartId] || null;
+    const cart = await this.prisma.cart.findUnique({
+      where: { userId },
+      include: { items: true },
+    });
+    if (!cart) return null;
+    return this.toGraphQL(cart);
   }
 
   async getOrCreateCart(userId: string): Promise<Cart> {
-    const cartId = `cart-${userId}`;
-    if (!this.carts[cartId]) {
-      this.carts[cartId] = {
-        id: cartId,
-        userId,
-        items: [],
-        totalPrice: 0,
-        itemCount: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+    let cart = await this.prisma.cart.findUnique({
+      where: { userId },
+      include: { items: true },
+    });
+
+    if (!cart) {
+      cart = await this.prisma.cart.create({
+        data: { userId },
+        include: { items: true },
+      });
     }
-    return this.carts[cartId];
+
+    return this.toGraphQL(cart);
   }
 
   async addToCart(
@@ -62,34 +70,73 @@ export class CartService {
     productPrice: number,
     productName: string
   ): Promise<Cart> {
-    const cart = await this.getOrCreateCart(userId);
+    let cart = await this.prisma.cart.findUnique({
+      where: { userId },
+    });
 
-    // Check if product already in cart
-    const existingItem = cart.items.find(
-      (item) => item.product.id === productId
-    );
-
-    if (existingItem) {
-      existingItem.quantity += quantity;
-      existingItem.subtotal = existingItem.quantity * productPrice;
-    } else {
-      cart.items.push({
-        id: randomUUID(),
-        product: { id: productId, name: productName, price: productPrice },
-        quantity,
-        subtotal: quantity * productPrice,
+    if (!cart) {
+      cart = await this.prisma.cart.create({
+        data: { userId },
       });
     }
 
-    this.recalculate(cart);
-    return cart;
+    const existingItem = await this.prisma.cartItem.findUnique({
+      where: { cartId_productId: { cartId: cart.id, productId } },
+    });
+
+    if (existingItem) {
+      await this.prisma.cartItem.update({
+        where: { id: existingItem.id },
+        data: { quantity: existingItem.quantity + quantity },
+      });
+    } else {
+      await this.prisma.cartItem.create({
+        data: {
+          cartId: cart.id,
+          productId,
+          productName,
+          productPrice,
+          quantity,
+        },
+      });
+    }
+
+    // Touch updatedAt
+    await this.prisma.cart.update({
+      where: { id: cart.id },
+      data: { updatedAt: new Date() },
+    });
+
+    const updated = await this.prisma.cart.findUnique({
+      where: { id: cart.id },
+      include: { items: true },
+    });
+
+    return this.toGraphQL(updated);
   }
 
   async removeFromCart(userId: string, cartItemId: string): Promise<Cart> {
-    const cart = await this.getOrCreateCart(userId);
-    cart.items = cart.items.filter((item) => item.id !== cartItemId);
-    this.recalculate(cart);
-    return cart;
+    const cart = await this.prisma.cart.findUnique({
+      where: { userId },
+    });
+
+    if (cart) {
+      await this.prisma.cartItem.deleteMany({
+        where: { id: cartItemId, cartId: cart.id },
+      });
+
+      await this.prisma.cart.update({
+        where: { id: cart.id },
+        data: { updatedAt: new Date() },
+      });
+    }
+
+    const updated = await this.prisma.cart.findUnique({
+      where: { userId },
+      include: { items: true },
+    });
+
+    return this.toGraphQL(updated || { id: '', userId, items: [], createdAt: new Date(), updatedAt: new Date() });
   }
 
   async updateCartItem(
@@ -97,36 +144,66 @@ export class CartService {
     cartItemId: string,
     quantity: number
   ): Promise<Cart> {
-    const cart = await this.getOrCreateCart(userId);
-    const item = cart.items.find((i) => i.id === cartItemId);
+    const cart = await this.prisma.cart.findUnique({
+      where: { userId },
+    });
 
-    if (item) {
+    if (cart) {
       if (quantity <= 0) {
-        cart.items = cart.items.filter((i) => i.id !== cartItemId);
+        await this.prisma.cartItem.deleteMany({
+          where: { id: cartItemId, cartId: cart.id },
+        });
       } else {
-        item.quantity = quantity;
-        item.subtotal = quantity * item.product.price;
+        await this.prisma.cartItem.updateMany({
+          where: { id: cartItemId, cartId: cart.id },
+          data: { quantity },
+        });
       }
+
+      await this.prisma.cart.update({
+        where: { id: cart.id },
+        data: { updatedAt: new Date() },
+      });
     }
 
-    this.recalculate(cart);
-    return cart;
+    const updated = await this.prisma.cart.findUnique({
+      where: { userId },
+      include: { items: true },
+    });
+
+    return this.toGraphQL(updated || { id: '', userId, items: [], createdAt: new Date(), updatedAt: new Date() });
   }
 
   async clearCart(userId: string): Promise<Cart> {
-    const cart = await this.getOrCreateCart(userId);
-    cart.items = [];
-    this.recalculate(cart);
-    return cart;
-  }
+    const cart = await this.prisma.cart.findUnique({
+      where: { userId },
+    });
 
-  private recalculate(cart: Cart): void {
-    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.subtotal, 0);
-    cart.itemCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
-    cart.updatedAt = new Date().toISOString();
+    if (cart) {
+      await this.prisma.cartItem.deleteMany({
+        where: { cartId: cart.id },
+      });
+
+      await this.prisma.cart.update({
+        where: { id: cart.id },
+        data: { updatedAt: new Date() },
+      });
+    }
+
+    const updated = await this.prisma.cart.findUnique({
+      where: { userId },
+      include: { items: true },
+    });
+
+    return this.toGraphQL(updated || { id: '', userId, items: [], createdAt: new Date(), updatedAt: new Date() });
   }
 
   async findById(cartId: string): Promise<Cart | null> {
-    return this.carts[cartId] || null;
+    const cart = await this.prisma.cart.findUnique({
+      where: { id: cartId },
+      include: { items: true },
+    });
+    if (!cart) return null;
+    return this.toGraphQL(cart);
   }
 }

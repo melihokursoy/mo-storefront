@@ -16,6 +16,7 @@ import { OrderResolver } from './order.resolver';
 import { OrderService } from './order.service';
 import { OrderDataLoader } from './order.dataloader';
 import { Order } from './order.entity';
+import { PrismaService } from './prisma.service';
 import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
@@ -48,6 +49,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
   controllers: [AppController],
   providers: [
     AppService,
+    PrismaService,
     OrderResolver,
     OrderService,
     OrderDataLoader,

@@ -1,20 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { Product } from './product.entity';
-import { ProductService } from './product.service';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class ProductDataLoader {
   private productLoader: DataLoader<string, Product | null>;
 
-  constructor(private productService: ProductService) {
-    // Create a DataLoader that batches product lookups
+  constructor(private prisma: PrismaService) {
     this.productLoader = new DataLoader(
       async (productIds: readonly string[]) => {
-        const products = await Promise.all(
-          productIds.map((id) => this.productService.findById(id))
-        );
-        return products;
+        const products = await this.prisma.product.findMany({
+          where: { id: { in: [...productIds] } },
+        });
+
+        const productMap = new Map(products.map((p) => [p.id, p]));
+
+        return productIds.map((id) => {
+          const p = productMap.get(id);
+          if (!p) return null;
+          return {
+            ...p,
+            imageUrl: p.imageUrl ?? undefined,
+            createdAt: p.createdAt.toISOString(),
+            updatedAt: p.updatedAt.toISOString(),
+          };
+        });
       }
     );
   }

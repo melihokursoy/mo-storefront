@@ -16,6 +16,7 @@ import { CartResolver } from './cart.resolver';
 import { CartService } from './cart.service';
 import { CartDataLoader } from './cart.dataloader';
 import { Cart } from './cart.entity';
+import { PrismaService } from './prisma.service';
 import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
@@ -48,6 +49,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
   controllers: [AppController],
   providers: [
     AppService,
+    PrismaService,
     CartResolver,
     CartService,
     CartDataLoader,

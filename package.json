@@ -3,7 +3,22 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:generate:product": "npx prisma generate --schema=apps/api-product/prisma/schema.prisma",
+    "db:generate:cart": "npx prisma generate --schema=apps/api-cart/prisma/schema.prisma",
+    "db:generate:order": "npx prisma generate --schema=apps/api-order/prisma/schema.prisma",
+    "db:generate": "npm run db:generate:product && npm run db:generate:cart && npm run db:generate:order",
+    "db:migrate:product": "npx prisma migrate dev --schema=apps/api-product/prisma/schema.prisma",
+    "db:migrate:cart": "npx prisma migrate dev --schema=apps/api-cart/prisma/schema.prisma",
+    "db:migrate:order": "npx prisma migrate dev --schema=apps/api-order/prisma/schema.prisma",
+    "db:migrate": "npm run db:migrate:product && npm run db:migrate:cart && npm run db:migrate:order",
+    "db:seed:product": "npx tsx apps/api-product/prisma/seed.ts",
+    "db:seed:cart": "npx tsx apps/api-cart/prisma/seed.ts",
+    "db:seed:order": "npx tsx apps/api-order/prisma/seed.ts",
+    "db:seed": "npm run db:seed:product && npm run db:seed:cart && npm run db:seed:order",
+    "db:setup": "npm run db:up && npm run db:generate && npm run db:migrate && npm run db:seed"
   },
   "private": true,
   "devDependencies": {
@@ -33,8 +48,10 @@
     "nx": "22.5.1",
     "postcss": "^8.5.6",
     "prettier": "^2.6.2",
+    "prisma": "^7.4.2",
     "tailwindcss": "^4.2.1",
     "tslib": "^2.3.0",
+    "tsx": "^4.21.0",
     "typescript": "~5.9.2",
     "webpack-cli": "^5.1.4"
   },
@@ -55,6 +72,7 @@
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.0",
     "@nx/nest": "^22.5.3",
+    "@prisma/client": "^7.4.2",
     "apollo-server": "^3.13.0",
     "axios": "^1.6.0",
     "dataloader": "^2.2.3",

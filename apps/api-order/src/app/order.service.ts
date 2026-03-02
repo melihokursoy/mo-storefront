@@ -1,99 +1,125 @@
 import { Injectable } from '@nestjs/common';
 import { Order, OrderStatus, OrderItem } from './order.entity';
-
-interface OrderDB {
-  [key: string]: Order;
-}
+import { PrismaService } from './prisma.service';
+import { OrderStatus as PrismaOrderStatus } from '../generated/prisma';
 
 @Injectable()
 export class OrderService {
-  private orders: OrderDB = {
-    'order-1': {
-      id: 'order-1',
-      userId: 'user-1',
-      cart: { id: 'cart-user-1', userId: 'user-1' },
-      items: [
-        {
-          id: 'item-1',
-          product: { id: '1', name: 'Wireless Headphones', price: 129.99 },
-          quantity: 1,
-          price: 129.99,
-          subtotal: 129.99,
-        },
-        {
-          id: 'item-2',
-          product: { id: '3', name: 'Laptop Stand', price: 49.99 },
-          quantity: 2,
-          price: 49.99,
-          subtotal: 99.98,
-        },
-      ],
-      status: OrderStatus.DELIVERED,
-      totalPrice: 229.97,
-      itemCount: 3,
-      createdAt: '2024-01-05T00:00:00Z',
-      updatedAt: '2024-01-15T00:00:00Z',
-    },
-  };
+  constructor(private prisma: PrismaService) {}
 
-  private orderSequence = 2;
+  private toGraphQL(order: any): Order {
+    return {
+      id: order.id,
+      userId: order.userId,
+      cart: order.cartId
+        ? { id: order.cartId, userId: order.cartUserId || order.userId }
+        : undefined,
+      items: (order.items || []).map((item: any) => ({
+        id: item.id,
+        product: {
+          id: item.productId,
+          name: item.productName,
+          price: item.productPrice,
+        },
+        quantity: item.quantity,
+        price: item.productPrice,
+        subtotal: item.quantity * item.productPrice,
+      })),
+      status: order.status as OrderStatus,
+      totalPrice: order.totalPrice,
+      itemCount: order.itemCount,
+      createdAt: order.createdAt.toISOString(),
+      updatedAt: order.updatedAt.toISOString(),
+    };
+  }
 
   async createOrder(
     userId: string,
     cartId: string,
     items: OrderItem[]
   ): Promise<Order> {
-    const orderId = `order-${this.orderSequence++}`;
-    const now = new Date().toISOString();
+    const totalPrice = items.reduce((sum, item) => sum + item.subtotal, 0);
+    const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
-    const order: Order = {
-      id: orderId,
-      userId,
-      cart: { id: cartId, userId },
-      items,
-      status: OrderStatus.PENDING,
-      totalPrice: items.reduce((sum, item) => sum + item.subtotal, 0),
-      itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
-      createdAt: now,
-      updatedAt: now,
-    };
+    const order = await this.prisma.order.create({
+      data: {
+        userId,
+        cartId,
+        cartUserId: userId,
+        status: PrismaOrderStatus.PENDING,
+        totalPrice,
+        itemCount,
+        items: {
+          create: items.map((item) => ({
+            productId: item.product.id,
+            productName: item.product.name,
+            productPrice: item.product.price || item.price,
+            quantity: item.quantity,
+          })),
+        },
+      },
+      include: { items: true },
+    });
 
-    this.orders[orderId] = order;
-    return order;
+    return this.toGraphQL(order);
   }
 
   async getOrder(orderId: string): Promise<Order | null> {
-    return this.orders[orderId] || null;
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { items: true },
+    });
+    if (!order) return null;
+    return this.toGraphQL(order);
   }
 
   async getUserOrders(userId: string): Promise<Order[]> {
-    return Object.values(this.orders).filter(
-      (order) => order.userId === userId
-    );
+    const orders = await this.prisma.order.findMany({
+      where: { userId },
+      include: { items: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    return orders.map((o) => this.toGraphQL(o));
   }
 
   async updateOrderStatus(
     orderId: string,
     status: OrderStatus
   ): Promise<Order | null> {
-    const order = this.orders[orderId];
-    if (order) {
-      order.status = status;
-      order.updatedAt = new Date().toISOString();
-    }
-    return order || null;
+    const existing = await this.prisma.order.findUnique({
+      where: { id: orderId },
+    });
+    if (!existing) return null;
+
+    const order = await this.prisma.order.update({
+      where: { id: orderId },
+      data: { status: status as PrismaOrderStatus },
+      include: { items: true },
+    });
+
+    return this.toGraphQL(order);
   }
 
   async findById(orderId: string): Promise<Order | null> {
-    return this.orders[orderId] || null;
+    return this.getOrder(orderId);
   }
 
   async cancelOrder(orderId: string): Promise<Order | null> {
-    const order = this.orders[orderId];
-    if (order && order.status !== OrderStatus.DELIVERED) {
-      order.status = OrderStatus.CANCELLED;
-      order.updatedAt = new Date().toISOString();
+    const existing = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { items: true },
+    });
+
+    if (!existing || existing.status === PrismaOrderStatus.DELIVERED) {
+      return existing ? this.toGraphQL(existing) : null;
     }
-    return order || null;
+
+    const order = await this.prisma.order.update({
+      where: { id: orderId },
+      data: { status: PrismaOrderStatus.CANCELLED },
+      include: { items: true },
+    });
+
+    return this.toGraphQL(order);
   }
 }

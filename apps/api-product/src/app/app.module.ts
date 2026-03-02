@@ -16,6 +16,7 @@ import { ProductResolver } from './product.resolver';
 import { ProductService } from './product.service';
 import { ProductDataLoader } from './product.dataloader';
 import { Product } from './product.entity';
+import { PrismaService } from './prisma.service';
 import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
@@ -48,6 +49,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
   controllers: [AppController],
   providers: [
     AppService,
+    PrismaService,
     ProductResolver,
     ProductService,
     ProductDataLoader,

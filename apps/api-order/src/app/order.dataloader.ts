@@ -1,19 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import DataLoader from 'dataloader';
-import { Order } from './order.entity';
-import { OrderService } from './order.service';
+import { Order, OrderStatus } from './order.entity';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class OrderDataLoader {
   private orderLoader: DataLoader<string, Order | null>;
 
-  constructor(private orderService: OrderService) {
-    // Create a DataLoader that batches order lookups
+  constructor(private prisma: PrismaService) {
     this.orderLoader = new DataLoader(async (orderIds: readonly string[]) => {
-      const orders = await Promise.all(
-        orderIds.map((id) => this.orderService.findById(id))
-      );
-      return orders;
+      const orders = await this.prisma.order.findMany({
+        where: { id: { in: [...orderIds] } },
+        include: { items: true },
+      });
+
+      const orderMap = new Map(orders.map((o) => [o.id, o]));
+
+      return orderIds.map((id) => {
+        const order = orderMap.get(id);
+        if (!order) return null;
+
+        return {
+          id: order.id,
+          userId: order.userId,
+          cart: order.cartId
+            ? { id: order.cartId, userId: order.cartUserId || order.userId }
+            : undefined,
+          items: order.items.map((item) => ({
+            id: item.id,
+            product: {
+              id: item.productId,
+              name: item.productName,
+              price: item.productPrice,
+            },
+            quantity: item.quantity,
+            price: item.productPrice,
+            subtotal: item.quantity * item.productPrice,
+          })),
+          status: order.status as OrderStatus,
+          totalPrice: order.totalPrice,
+          itemCount: order.itemCount,
+          createdAt: order.createdAt.toISOString(),
+          updatedAt: order.updatedAt.toISOString(),
+        };
+      });
     });
   }
 

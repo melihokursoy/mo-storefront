@@ -5,7 +5,9 @@
       "Bash(then echo \"✅ Gateway is now listening on port 3300!\" echo \"\" echo \"Testing Gateway GraphQL endpoint:\" curl -s -X POST http://localhost:3300/graphql  -H \"Content-Type: application/json\"  -d '{\"\"query\"\": \"\"{ __typename }\"\"}')",
       "Bash(python3:*)",
       "Bash(fi)",
-      "Bash(pkill -f \"api-gateway\" sleep 3 echo \"Running Gateway in foreground to see errors...\" timeout 15 npx nx serve api-gateway)"
+      "Bash(pkill -f \"api-gateway\" sleep 3 echo \"Running Gateway in foreground to see errors...\" timeout 15 npx nx serve api-gateway)",
+      "Bash(npx prisma:*)",
+      "WebFetch(domain:www.prisma.io)"
     ]
   }
 }

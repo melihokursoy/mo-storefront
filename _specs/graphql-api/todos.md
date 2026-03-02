@@ -137,11 +137,11 @@
 
 ### Checkpoint 14: Databases Initialized
 
-- [ ] Initialize Prisma in each subgraph (api-product, api-cart, api-order)
-- [ ] Configure unique DATABASE_URL for each subgraph in .env.local
-- [ ] Define schema for Product subgraph (products, categories)
-- [ ] Define schema for Cart subgraph (carts, cart_items)
-- [ ] Define schema for Order subgraph (orders, order_items)
+- [x] Initialize Prisma in each subgraph (api-product, api-cart, api-order)
+- [x] Configure unique DATABASE_URL for each subgraph in .env.local
+- [x] Define schema for Product subgraph (products, categories)
+- [x] Define schema for Cart subgraph (carts, cart_items)
+- [x] Define schema for Order subgraph (orders, order_items)
 - [ ] Run: npx prisma migrate dev --name init (in each subgraph)
 - [ ] Verify databases created with prisma studio
 
