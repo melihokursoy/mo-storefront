@@ -89,5 +89,8 @@
     "react-dom": "^19.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0"
+  },
+  "npm": {
+    "strictPeerDependencies": false
   }
 }
