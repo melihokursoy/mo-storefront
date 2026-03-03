@@ -22,7 +22,7 @@
     "db:setup": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cd apps/api-product && docker compose up -d && cd ../.. && npm run db:generate:product && npm run db:migrate:product && npm run db:seed:product"
+        "command": "cd apps/api-product && docker compose up -d && until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done && cd ../.. && npm run db:generate:product && npm run db:migrate:product && npm run db:seed:product"
       }
     },
     "serve": {

@@ -22,7 +22,7 @@
     "db:setup": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cd apps/api-cart && docker compose up -d && cd ../.. && npm run db:generate:cart && npm run db:migrate:cart && npm run db:seed:cart"
+        "command": "cd apps/api-cart && docker compose up -d && until pg_isready -h localhost -p 5433 -U postgres; do sleep 1; done && cd ../.. && npm run db:generate:cart && npm run db:migrate:cart && npm run db:seed:cart"
       }
     },
     "serve": {
