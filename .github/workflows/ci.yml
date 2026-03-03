@@ -20,6 +20,8 @@ jobs:
       DATABASE_URL_ORDER: postgresql://postgres:postgres@localhost:5434/order_db
       # Disable Node inspector in CI to avoid port conflicts when running tests in parallel
       NODE_OPTIONS: --no-warnings
+      # Allow built services to resolve workspace packages from root node_modules
+      NODE_PATH: /home/runner/work/mo-storefront/mo-storefront/node_modules
 
     steps:
       - uses: actions/checkout@v4
