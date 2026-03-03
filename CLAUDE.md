@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **💡 Tip**: Before starting work, check [`.claude/rules/`](.claude/rules/RULES.md) for project patterns and common pitfalls relevant to your task.
+
 ## Codebase Overview
 
 **mo-storefront** is an Nx monorepo for building a modern storefront application with:
@@ -129,9 +131,9 @@ mo-storefront/
 3. **Implement by checkpoint**:
 
    - Work through plan sequentially
-   - write tests first then implement te code
-   - write required tests within that checkpoint
-   - Update todos.md review section with observations
+   - Write tests first, then implement the code
+   - Write required tests within that checkpoint
+   - Update todos.md "Review Notes" section with observations
    - After each checkpoint: mark todos complete, add notes, commit with custom commit command
 
 4. **Verify before "done"**:
@@ -158,10 +160,54 @@ mo-storefront/
 
 ### 5. Self-Improvement Loop
 
-- After ANY correction from the user: update `.claude/rules/<TOPIC>.md` with the pattern
-- Write rules for yourself that prevent the same mistake
-- Ruthlessly iterate on these lessons until mistake rate drops
-- Review lessons at session start for relevant project
+**Purpose**: `.claude/rules/` files capture patterns and mistakes discovered during development, preventing recurring issues.
+
+**When to create/update rules:**
+
+- After user correction or feedback
+- When discovering a non-obvious pattern in the codebase
+- When a bug is fixed (capture the root cause pattern)
+- After architectural decisions are made
+
+**Rule file structure** (`.claude/rules/<TOPIC>.md`):
+
+```markdown
+# <Topic>
+
+## Pattern
+
+[Describe the pattern/rule clearly]
+
+## Why This Matters
+
+[Explain the impact of following/breaking this rule]
+
+## Example (What Not To Do)
+
+[Show incorrect approach with code or process]
+
+## Example (Correct Approach)
+
+[Show correct approach]
+
+## Checklist
+
+- [ ] Apply before starting related work
+- [ ] Review when similar task arises
+```
+
+**Example rule files for this project:**
+
+- `.claude/rules/nx-workspace.md` - Nx command patterns and gotchas
+- `.claude/rules/graphql-api.md` - Apollo Federation and NestJS patterns
+- `.claude/rules/testing.md` - Testing patterns and test-first approach
+- `.claude/rules/git-workflow.md` - Commit, branch, and PR conventions
+
+**Review process:**
+
+- At session start, check `.claude/rules/` for topics relevant to current task
+- Before implementing, scan rules for gotchas
+- Update rules when patterns change or new insights emerge
 
 ## Git Workflow
 

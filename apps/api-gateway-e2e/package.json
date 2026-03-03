@@ -19,7 +19,10 @@
         },
         "dependsOn": [
           "api-gateway:build",
-          "api-gateway:serve"
+          "api-gateway:serve",
+          "api-product:serve",
+          "api-cart:serve",
+          "api-order:serve"
         ]
       }
     }

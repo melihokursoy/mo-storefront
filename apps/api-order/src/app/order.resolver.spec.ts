@@ -3,6 +3,7 @@ import { OrderResolver, OrderItemInput } from './order.resolver';
 import { OrderService } from './order.service';
 import { OrderStatus } from './order.entity';
 import { JwtAuthGuard } from './auth/jwt.guard';
+import { JwtService } from '@nestjs/jwt';
 
 describe('OrderResolver', () => {
   let resolver: OrderResolver;
@@ -22,9 +23,10 @@ describe('OrderResolver', () => {
         OrderResolver,
         { provide: OrderService, useValue: mockOrderService },
         {
-          provide: JwtAuthGuard,
-          useValue: { canActivate: jest.fn(() => true) },
+          provide: JwtService,
+          useValue: { verify: jest.fn() },
         },
+        JwtAuthGuard,
       ],
     }).compile();
 

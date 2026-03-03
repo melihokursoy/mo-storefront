@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CartResolver } from './cart.resolver';
 import { CartService } from './cart.service';
 import { JwtAuthGuard } from './auth/jwt.guard';
+import { JwtService } from '@nestjs/jwt';
 
 describe('CartResolver', () => {
   let resolver: CartResolver;
@@ -21,9 +22,10 @@ describe('CartResolver', () => {
         CartResolver,
         { provide: CartService, useValue: mockCartService },
         {
-          provide: JwtAuthGuard,
-          useValue: { canActivate: jest.fn(() => true) },
+          provide: JwtService,
+          useValue: { verify: jest.fn() },
         },
+        JwtAuthGuard,
       ],
     }).compile();
 

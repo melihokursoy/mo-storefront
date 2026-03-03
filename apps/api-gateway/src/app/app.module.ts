@@ -8,12 +8,33 @@ import {
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+const {
+  IntrospectAndCompose,
+  RemoteGraphQLDataSource,
+} = require('@apollo/gateway');
+
+class AuthenticatedDataSource extends RemoteGraphQLDataSource {
+  constructor(config: any) {
+    super(config);
+  }
+
+  async willSendRequest({ request, context }: any) {
+    // Forward Authorization header to subgraphs
+    if (context.req?.headers?.authorization) {
+      request.http.headers.set(
+        'authorization',
+        context.req.headers.authorization
+      );
+    }
+  }
+}
+
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloGatewayDriverConfig>({
       driver: ApolloGatewayDriver,
       gateway: {
-        supergraphSdl: new (require('@apollo/gateway').IntrospectAndCompose)({
+        supergraphSdl: new IntrospectAndCompose({
           subgraphs: [
             { name: 'product', url: 'http://localhost:3301/graphql' },
             { name: 'cart', url: 'http://localhost:3302/graphql' },
@@ -22,6 +43,8 @@ import { AppService } from './app.service';
           pollIntervalInMs: 10000,
           subgraphHealthCheck: true,
         }),
+        buildService: (definition: any) =>
+          new AuthenticatedDataSource({ url: definition.url }) as any,
       },
       server: {
         context: ({ req }: { req: any }) => ({

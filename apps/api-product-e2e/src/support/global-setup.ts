@@ -1,16 +1,82 @@
 import { waitForPortOpen } from '@nx/node/utils';
+import { execSync } from 'child_process';
 
 /* eslint-disable */
 var __TEARDOWN_MESSAGE__: string;
 
 module.exports = async function () {
-  // Start services that that the app needs to run (e.g. database, docker-compose, etc.).
-  console.log('\nSetting up...\n');
+  console.log('\nSetting up product subgraph e2e tests...\n');
 
+  // Step 1: Set up database (docker containers, migrations, seed data)
+  try {
+    console.log('  Starting database container...');
+    execSync('npm run db:up', { stdio: 'inherit', cwd: process.cwd() });
+    console.log('  ✓ Database container started\n');
+
+    console.log('  Generating Prisma client...');
+    execSync('npm run db:generate:product', {
+      stdio: 'inherit',
+      cwd: process.cwd(),
+    });
+    console.log('  ✓ Prisma client generated\n');
+
+    console.log('  Running migration...');
+    const svcDir = `${process.cwd()}/apps/api-product`;
+    execSync('npx prisma migrate dev', {
+      stdio: 'inherit',
+      cwd: svcDir,
+    });
+    console.log('  ✓ Migration completed\n');
+
+    console.log('  Seeding data...');
+    execSync('npm run db:seed:product', {
+      stdio: 'inherit',
+      cwd: process.cwd(),
+    });
+    console.log('  ✓ Database seeded\n');
+  } catch (error) {
+    console.error('  ✗ Database setup failed:', error);
+    throw error;
+  }
+
+  // Step 2: Wait for product subgraph to be ready
   const host = process.env.HOST ?? 'localhost';
-  const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+  const port = 3301;
+  const maxRetries = 60;
+  const retryDelayMs = 1000;
+
+  console.log(`  Waiting for product subgraph on :${port}...`);
   await waitForPortOpen(port, { host });
 
+  // Wait for GraphQL to be ready
+  console.log('  Verifying subgraph is ready for queries...');
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const res = await fetch(`http://${host}:${port}/graphql`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: '{ __typename }' }),
+      });
+      const data = (await res.json()) as { data?: { __typename?: string } };
+      if (data.data?.__typename === 'Query') {
+        console.log('  ✓ Product subgraph is ready\n');
+        break;
+      }
+    } catch (error) {
+      if (i === maxRetries - 1) {
+        throw new Error(
+          `Subgraph failed to initialize after ${
+            (maxRetries * retryDelayMs) / 1000
+          }s`
+        );
+      }
+      await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+    }
+  }
+
+  console.log('✓ Product subgraph e2e setup complete\n');
+
   // Hint: Use `globalThis` to pass variables to global teardown.
-  globalThis.__TEARDOWN_MESSAGE__ = '\nTearing down...\n';
+  globalThis.__TEARDOWN_MESSAGE__ =
+    '\n✓ Product subgraph e2e tests complete.\n';
 };
