@@ -3,7 +3,12 @@
   "targets": {
     "e2e": {
       "executor": "@nx/jest:jest",
-      "dependsOn": ["^api-order:serve:development"]
+      "dependsOn": [
+        {
+          "projects": ["api-order"],
+          "target": "serve"
+        }
+      ]
     }
   }
 }

@@ -1,5 +1,4 @@
 import { waitForPortOpen } from '@nx/node/utils';
-import { execSync } from 'child_process';
 
 /* eslint-disable */
 var __TEARDOWN_MESSAGE__: string;
@@ -18,42 +17,9 @@ const API_SERVICES = [
 ];
 
 module.exports = async function () {
-  console.log('\nSetting up federation e2e tests...\n');
+  console.log('\nVerifying federation e2e environment...\n');
 
-  // Step 1: Set up databases (docker containers, migrations, seed data)
-  try {
-    // In CI, databases are already running as service containers; skip db:up
-    if (!process.env.CI && !process.env.GITHUB_ACTIONS) {
-      console.log('  Starting database containers...');
-      execSync('npm run db:up', { stdio: 'inherit', cwd: process.cwd() });
-      console.log('  ✓ Database containers started\n');
-    } else {
-      console.log('  Skipping db:up (CI environment detected, services already running)\n');
-    }
-
-    console.log('  Generating Prisma clients...');
-    execSync('npm run db:generate', { stdio: 'inherit', cwd: process.cwd() });
-    console.log('  ✓ Prisma clients generated\n');
-
-    console.log('  Running migrations...');
-    for (const svc of API_SERVICES) {
-      const svcDir = `${process.cwd()}/apps/api-${svc.name}`;
-      execSync('npx prisma migrate dev', {
-        stdio: 'inherit',
-        cwd: svcDir,
-      });
-    }
-    console.log('  ✓ Migrations completed\n');
-
-    console.log('  Seeding data...');
-    execSync('npm run db:seed', { stdio: 'inherit', cwd: process.cwd() });
-    console.log('  ✓ Database seeded\n');
-  } catch (error) {
-    console.error('  ✗ Database setup failed:', error);
-    throw error;
-  }
-
-  // Step 2: Wait for all 4 federation services to be ready
+  // Wait for all 4 federation services to be ready
   const host = process.env.HOST ?? 'localhost';
   const maxRetries = 60;
   const retryDelayMs = 1000;

@@ -20,7 +20,37 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3300;
   await app.listen(port);
-  Logger.log(`🚀 Apollo Gateway running on: http://localhost:${port}/graphql`);
+
+  // Verify GraphQL endpoint is ready before signaling readiness
+  const maxRetries = 30;
+  const retryDelayMs = 100;
+  let isReady = false;
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const res = await fetch(`http://localhost:${port}/graphql`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: '{ __typename }' }),
+      });
+      const data = (await res.json()) as { data?: { __typename?: string } };
+      if (data.data?.__typename === 'Query') {
+        isReady = true;
+        break;
+      }
+    } catch (error) {
+      // Retry
+    }
+    await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+  }
+
+  if (isReady) {
+    Logger.log(
+      `🚀 Apollo Gateway running on: http://localhost:${port}/graphql`
+    );
+  } else {
+    throw new Error('Apollo Gateway failed to initialize');
+  }
 }
 
 bootstrap();

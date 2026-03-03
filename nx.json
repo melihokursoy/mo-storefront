@@ -50,6 +50,11 @@
     }
   ],
   "neverConnectToCloud": true,
+  "targetDefaults": {
+    "serve": {
+      "continuous": true
+    }
+  },
   "generators": {
     "@nx/next": {
       "application": {

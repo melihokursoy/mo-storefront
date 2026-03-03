@@ -1,0 +1,37 @@
+{
+  "projectType": "application",
+  "targets": {
+    "db:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api-cart && npx prisma generate --schema=prisma/schema.prisma && cd ../.."
+      }
+    },
+    "db:migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api-cart && npx prisma migrate dev --schema=prisma/schema.prisma && cd ../.."
+      }
+    },
+    "db:seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api-cart && npx tsx prisma/seed.ts && cd ../.."
+      }
+    },
+    "db:setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api-cart && docker compose up -d && cd ../.. && npm run db:generate:cart && npm run db:migrate:cart && npm run db:seed:cart"
+      }
+    },
+    "serve": {
+      "dependsOn": [
+        {
+          "projects": ["api-cart"],
+          "target": "db:setup"
+        }
+      ]
+    }
+  }
+}

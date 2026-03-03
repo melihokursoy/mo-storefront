@@ -1,0 +1,37 @@
+{
+  "projectType": "application",
+  "targets": {
+    "db:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api-order && npx prisma generate --schema=prisma/schema.prisma && cd ../.."
+      }
+    },
+    "db:migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api-order && npx prisma migrate dev --schema=prisma/schema.prisma && cd ../.."
+      }
+    },
+    "db:seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api-order && npx tsx prisma/seed.ts && cd ../.."
+      }
+    },
+    "db:setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api-order && docker compose up -d && cd ../.. && npm run db:generate:order && npm run db:migrate:order && npm run db:seed:order"
+      }
+    },
+    "serve": {
+      "dependsOn": [
+        {
+          "projects": ["api-order"],
+          "target": "db:setup"
+        }
+      ]
+    }
+  }
+}

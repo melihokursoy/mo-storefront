@@ -3,7 +3,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 
 const connectionString =
-  process.env.DATABASE_URL ||
+  process.env.DATABASE_URL_ORDER ||
   'postgresql://postgres:postgres@localhost:5434/order_db';
 
 async function main() {

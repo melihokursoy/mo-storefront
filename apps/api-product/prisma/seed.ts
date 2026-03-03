@@ -3,7 +3,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 
 const connectionString =
-  process.env.DATABASE_URL ||
+  process.env.DATABASE_URL_PRODUCT ||
   'postgresql://postgres:postgres@localhost:5432/product_db';
 
 async function main() {

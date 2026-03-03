@@ -2,6 +2,15 @@
   "projectType": "application",
   "sourceRoot": "apps/api-gateway/src",
   "prefix": "org",
-  "targets": {},
+  "targets": {
+    "serve": {
+      "dependsOn": [
+        {
+          "projects": ["api-product", "api-cart", "api-order"],
+          "target": "serve"
+        }
+      ]
+    }
+  },
   "implicitDependencies": ["api-product", "api-cart", "api-order"]
 }

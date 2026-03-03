@@ -4,10 +4,10 @@
     "e2e": {
       "executor": "@nx/jest:jest",
       "dependsOn": [
-        "^api-gateway:serve:development",
-        "^api-product:serve:development",
-        "^api-cart:serve:development",
-        "^api-order:serve:development"
+        {
+          "projects": ["api-gateway", "api-product", "api-cart", "api-order"],
+          "target": "serve"
+        }
       ]
     }
   }

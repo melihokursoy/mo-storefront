@@ -636,3 +636,84 @@ _Observations from implementation:_
 - Entity separation works well: each subgraph manages own database, tests own responsibility
 - Federation works cleanly when auth layer properly forwards context to subgraphs
 - E2E test isolation improves both speed and failure clarity
+
+**Readiness Signal Enhancement (Post-Test-Verification):**
+
+- [x] Enhanced all 4 NestJS serve tasks to output GraphQL readiness signals
+  - Modified `apps/api-product/src/main.ts`: Verify GraphQL endpoint responds before logging readiness
+  - Modified `apps/api-order/src/main.ts`: Verify GraphQL endpoint responds before logging readiness
+  - Modified `apps/api-cart/src/main.ts`: Verify GraphQL endpoint responds before logging readiness
+  - Modified `apps/api-gateway/src/main.ts`: Verify GraphQL endpoint responds before logging readiness
+- [x] Readiness check pattern (all 4 services):
+  - Start NestJS app and listen on port
+  - Query GraphQL endpoint with introspection query: `{ __typename }`
+  - Verify response: `data.__typename === 'Query'`
+  - Retry logic: 30 retries, 100ms delay between attempts (max 3 seconds)
+  - Only log readiness message after GraphQL is verified ready
+  - Throw error if GraphQL endpoint doesn't respond after all retries
+- [x] Nx task orchestration benefits:
+  - `targetDefaults.serve.continuous: true` keeps serve processes alive
+  - E2E suite's `dependsOn: [{ projects: [...], target: 'serve' }]` now waits for services to be ready
+  - GraphQL readiness signals prevent race conditions between services
+  - Gateway waits for subgraph startup via Nx task dependencies
+  - All 4 services can be orchestrated seamlessly without manual management
+
+**Database Setup Configuration (Subgraph-Level Independence with Split Docker Compose):**
+
+- [x] Split docker-compose into per-subgraph files with shared stack name
+  - `apps/api-product/docker-compose.yml` - PostgreSQL on port 5432 for product_db
+  - `apps/api-cart/docker-compose.yml` - PostgreSQL on port 5433 for cart_db
+  - `apps/api-order/docker-compose.yml` - PostgreSQL on port 5434 for order_db
+  - **All use `name: mo-storefront`** for shared stack/network namespace
+  - Each subgraph owns its database container definition but shares project namespace
+  - Containers: mo-db-product, mo-db-cart, mo-db-order (all in mo-storefront stack)
+  - Single shared network: mo-storefront_default
+  - Root docker-compose.yml (original) no longer needed
+- [x] Each subgraph manages its own database initialization via Nx targets
+  - api-product: db:generate, db:migrate, db:seed, db:setup targets
+  - api-cart: db:generate, db:migrate, db:seed, db:setup targets
+  - api-order: db:generate, db:migrate, db:seed, db:setup targets
+  - Each db:setup runs: `cd apps/* && docker compose up -d && ... prisma generate && migrate && seed`
+  - Each subgraph's docker-compose runs from its own directory
+- [x] Configured each serve target to depend on its own db:setup
+  - api-product serve: depends on api-product:db:setup
+  - api-cart serve: depends on api-cart:db:setup
+  - api-order serve: depends on api-order:db:setup
+  - api-gateway serve: depends on subgraph serves (which trigger their db:setups)
+  - Ensures each database initialized before its service starts
+- [x] Removed workspace-level db:setup
+  - Deleted root project.json (workspace-level)
+  - Removed db:setup from nx.json targetDefaults
+  - Each subgraph is now fully independent
+- [x] Verified execution:
+  - ✓ api-product:db:setup runs: docker compose up (local) → prisma generate → migrate → seed
+  - ✓ Each subgraph's PostgreSQL container starts independently
+  - ✓ Databases initialized and seeded per subgraph
+  - ✓ E2E tests run with proper db:setup dependency for each service
+  - ✓ All 7 federation e2e tests passing
+  - ✓ Container naming: mo-db-product, mo-db-cart, mo-db-order (no conflicts)
+- [x] Architecture benefits:
+  - Each subgraph independently manages its database lifecycle AND container
+  - Clear separation of concerns: subgraph = service + database + container definition
+  - Easy to test individual subgraphs: `npx nx serve api-product` includes full db setup + container
+  - Easy to deploy/scale: each subgraph can run in its own environment
+  - No workspace-level coupling or tight dependencies
+  - Follows microservices architecture pattern: service owns its data AND infrastructure
+  - Container-level isolation: each subgraph's docker-compose runs independently
+- [x] Fixed Prisma v7 configuration:
+  - Removed `url = env("DATABASE_URL")` from schema files (not supported in Prisma v7)
+  - Schema files now have minimal datasource config (provider only)
+  - Database URL configured in prisma.config.ts files for each service
+  - Modified db:migrate scripts to change to service directory before running (so .env is loaded properly)
+  - db:migrate commands now run from within apps/api-\*/: `cd apps/api-product && npx prisma migrate dev --schema=prisma/schema.prisma && cd ../..`
+- [x] Database setup verified working:
+  - ✓ Docker containers start (db:up)
+  - ✓ Prisma clients generated for all 3 services (db:generate)
+  - ✓ Database migrations applied (db:migrate) - all schemas in sync
+  - ✓ Sample data seeded (db:seed) - 5 products, 1 cart, 1 order created
+- [x] Benefits:
+  - Databases are automatically initialized before serve starts
+  - Prevents "connection refused" errors when serve tries to connect to uninitialized DB
+  - Ensures migrations and seeds are applied before GraphQL queries can execute
+  - Nx orchestrates full startup sequence: db:setup → serve → readiness check
+  - Proper Prisma v7 support with config files and relative paths
