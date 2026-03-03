@@ -158,16 +158,29 @@
 - [x] Run: npx nx test api-order (22 tests pass)
 - [x] All subgraph tests pass (60 total tests)
 
-### Checkpoint 16: Integration Tests Pass ✅ COMPLETE
+### Checkpoint 16: Proper E2E Testing Infrastructure ✅ COMPLETE
 
-- [x] Write federation e2e test: browse products query
-- [x] Write federation e2e test: add to cart (cart → product reference)
-- [x] Write federation e2e test: create order (order → product + cart references)
-- [x] Write federation e2e test: single product lookup
-- [x] Test authentication flows (JWT validation)
-- [x] Test error handling and edge cases (unauthenticated mutations)
-- [x] Run complete federation e2e test suite
-- [x] All integration tests pass (7/7 tests)
+**Core Work:**
+
+- [x] Fix jest.config.cts: Convert ESM to CommonJS syntax in all 4 e2e projects
+- [x] Rewrite global-setup.ts: Multi-service orchestration (up→generate→migrate→seed) + port verification
+- [x] Rewrite global-teardown.ts: Remove killPort, let Nx manage service lifecycle
+- [x] Rewrite test-setup.ts: Replace axios with GraphQL fetch helper (gql() + makeToken())
+
+**Authentication Infrastructure:**
+
+- [x] Create custom JWT guards: GraphQL-aware CanActivate (not Passport) in product, cart, order subgraphs
+- [x] Implement RemoteGraphQLDataSource: Auth header forwarding in gateway to subgraphs
+- [x] Fix unit test dependencies: Provide JwtService mock in resolver test modules
+
+**Test Suite Rewrite:**
+
+- [x] api-product-e2e: 4 tests (list products, get by id, filter by category, error handling)
+- [x] api-cart-e2e: 4 tests (add item with JWT, update quantity, clear cart, reject unauthenticated)
+- [x] api-order-e2e: 4 tests (create with JWT, reject unauthenticated, list orders, get by id)
+- [x] api-gateway-e2e: 7 tests (introspection, multi-subgraph routing, auth forwarding, error handling)
+- [x] Clear separation of concerns: Each suite tests only its service responsibility
+- [x] All 19 e2e tests pass
 
 ## Final Verification
 
@@ -187,24 +200,37 @@
 
 _Observations from implementation:_
 
-- [ ] What went smoothly?
+- [x] What went smoothly?
 
-  - ...
+  - Custom GraphQL JWT guards worked well once we switched from Passport's Express-based approach
+  - RemoteGraphQLDataSource subclass for auth forwarding was clean and elegant
+  - Separating each e2e test to its service responsibility made tests run faster and clearer
+  - Global setup/teardown orchestration handles all 4 services transparently
 
-- [ ] What was unexpected?
+- [x] What was unexpected?
 
-  - ...
+  - Passport's AuthGuard('jwt') expects Express req object, incompatible with GraphQL context - had to create custom CanActivate implementation
+  - Jest.config needs CommonJS exports (not ESM) even in TypeScript projects - .cts extension doesn't auto-convert
+  - TypeScript unknown type from res.json() requires explicit type casting - needed for all global-setup.ts files
+  - Unit tests required JwtService mock even when JwtAuthGuard was mocked - NestJS resolves all constructor dependencies
 
-- [ ] Any improvements to the plan?
+- [x] Any improvements to the plan?
 
-  - ...
+  - Each e2e project should test ONLY its responsibility, not duplicate entire federation stack
+  - Custom JWT guards should handle GraphQL context directly instead of relying on Passport middleware
+  - Database initialization needs per-service orchestration, not centralized env files
+  - Global setup/teardown needs explicit port verification for all 4 services
 
-- [ ] Federation-specific challenges?
+- [x] Federation-specific challenges?
 
-  - ...
+  - Authorization context must flow through gateway to subgraphs (not automatic in Apollo)
+  - GraphQL guards need special handling (can't use Passport directly)
+  - Entity references need seed data in all databases to test properly
 
-- [ ] Performance improvements from federation?
-  - ...
+- [x] Performance improvements from federation?
+  - DataLoader prevents N+1 queries for entity references
+  - Query complexity validation limits expensive nested queries
+  - Each subgraph has independent database, allowing for future horizontal scaling
 
 ---
 
@@ -547,38 +573,66 @@ _Observations from implementation:_
 
 ## Checkpoint 16 Notes
 
-- ✓ Created federation-integration.spec.ts at apps/api-gateway-e2e/src/api-gateway/
+**Problem Analysis:**
 
-  - Uses Jest framework (matches existing e2e project infrastructure)
-  - HTTP client: native fetch (Node 22 built-in, no extra dependency)
-  - JWT helper: jsonwebtoken (already installed via passport-jwt)
-  - File naming: .spec.ts (Jest convention in e2e projects)
-  - Location: api-gateway-e2e project (federation tests are true e2e tests)
+- api-gateway-e2e was misconfigured for GraphQL federation (waited for port 3000 instead of 3300, used axios for REST)
+- All subgraph e2e projects had same infrastructure issues
+- Jest config used ESM syntax causing ts-node crashes on CommonJS projects
+- JWT authentication wasn't working in GraphQL context (Passport expects Express req object)
+- E2E tests were duplicating entire federation stack instead of testing only their responsibility
 
-- ✓ Implemented 7 federation integration tests:
+**Solutions Implemented:**
 
-  1. Browse products (public query through gateway)
-  2. Single product lookup by ID
-  3. Products with category filter
-  4. Add to cart (guarded mutation with JWT)
-  5. Create order (guarded mutation with JWT)
-  6. Unauthenticated mutation rejection (error handling)
-  7. Get user orders (public query)
+1. **Jest Configuration (all 4 e2e projects)**
 
-- ✓ Key Design Decisions:
+   - Converted from ESM (`import`/`export default`) to CommonJS (`require`/`module.exports`)
+   - Fixed ts-node crash when loading jest.config.cts files
 
-  - `gql()` helper abstracts fetch + JSON + headers for clean test code
-  - `makeToken()` generates valid JWT payloads matching JwtPayload interface
-  - Uses Jest expect() assertions (consistent with api-gateway-e2e project)
-  - Tests require running services but fail gracefully if unavailable
-  - Follows existing api-gateway.spec.ts test pattern
+2. **Global Setup Orchestration (all 4 e2e projects)**
 
-- ✓ Test Coverage:
+   - Sequential database initialization: npm run db:up → db:generate → db:migrate → db:seed
+   - Port verification for all 4 services (gateway:3300, product:3301, cart:3302, order:3303)
+   - GraphQL readiness verification with actual introspection query
+   - Type-safe JSON response handling with explicit type assertions
 
-  - All 7 tests cover federation patterns: queries, mutations, auth, references
-  - Public queries (products, orders) work without authentication
-  - Protected mutations (addToCart, createOrder) require valid JWT
-  - Error handling verified for unauthenticated requests
-  - Run with: `npx nx e2e api-gateway-e2e` (includes both api-gateway.spec.ts and federation-integration.spec.ts)
+3. **Test Helpers (test-setup.ts in all 4 e2e projects)**
 
-- ✓ Ready for final verification (all services running) and Phase 10 completion
+   - Replaced axios REST client with native fetch GraphQL helper
+   - `gql(query, variables, token)` function for clean test code
+   - `makeToken(userId)` for JWT generation
+   - Global availability via test setup hooks
+
+4. **Custom JWT Guards (product, cart, order subgraphs)**
+
+   - Replaced Passport's AuthGuard with custom CanActivate implementation
+   - Extracts token from GraphQL context arg[2]
+   - Validates with JwtService (no Express req needed)
+   - Sets userId and user on context for resolver access
+   - Type-safe error handling for unknown error types
+
+5. **Authorization Forwarding (api-gateway)**
+
+   - RemoteGraphQLDataSource subclass overrides willSendRequest hook
+   - Forwards Authorization header from context to all subgraph requests
+   - Enables end-to-end JWT authentication across federation
+
+6. **E2E Test Suites (clear separation of concerns)**
+   - **api-product-e2e** (4 tests): list, get by id, filter by category, error handling
+   - **api-cart-e2e** (4 tests): add item, update quantity, clear cart, reject unauthenticated
+   - **api-order-e2e** (4 tests): create order, list orders, get order, error handling
+   - **api-gateway-e2e** (7 tests): introspection, multi-subgraph routing, auth forwarding, error handling
+   - Each suite tests ONLY its service responsibility (no duplication)
+
+**Test Results:**
+
+- All 19 e2e tests passing
+- All 60 unit tests passing (product:17, cart:21, order:22)
+- TypeScript typecheck passing
+- Pre-commit hooks passing
+
+**Key Architectural Learnings:**
+
+- GraphQL authentication requires different approach than REST (context instead of req)
+- Entity separation works well: each subgraph manages own database, tests own responsibility
+- Federation works cleanly when auth layer properly forwards context to subgraphs
+- E2E test isolation improves both speed and failure clarity

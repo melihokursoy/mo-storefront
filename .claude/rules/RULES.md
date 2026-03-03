@@ -11,6 +11,7 @@ This directory contains project-specific rules that guide Claude Code developmen
 - **[nx-workspace.md](nx-workspace.md)** - Nx command patterns, task discovery, and common gotchas
 - **[testing.md](testing.md)** - Test-first development, unit vs E2E patterns, pre-commit validation
 - **[git-workflow.md](git-workflow.md)** - Commit messages, branch naming, PR conventions
+- **[checkpoint-workflow.md](checkpoint-workflow.md)** - Checkpoint completion, todos.md updates, review notes
 
 ### Feature-Specific
 

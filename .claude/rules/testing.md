@@ -73,12 +73,12 @@ typecheck       # TypeScript validation
 
 ### Critical Rule: Each `*-e2e` tests ONLY its responsibility
 
-| Service | Owns | Excludes |
-|---------|------|----------|
-| **api-product-e2e** | Product queries, filters | Cart, Orders, Gateway |
-| **api-cart-e2e** | Cart operations + JWT auth | Product data, Order operations |
-| **api-order-e2e** | Order operations + JWT auth | Product data, Cart state |
-| **api-gateway-e2e** | Federation composition, cross-subgraph queries | Subgraph business logic |
+| Service             | Owns                                           | Excludes                       |
+| ------------------- | ---------------------------------------------- | ------------------------------ |
+| **api-product-e2e** | Product queries, filters                       | Cart, Orders, Gateway          |
+| **api-cart-e2e**    | Cart operations + JWT auth                     | Product data, Order operations |
+| **api-order-e2e**   | Order operations + JWT auth                    | Product data, Cart state       |
+| **api-gateway-e2e** | Federation composition, cross-subgraph queries | Subgraph business logic        |
 
 ### ❌ What NOT to test in each suite
 
@@ -95,7 +95,9 @@ it('should list products', async () => { ... }); // Already in api-product-e2e
 ```typescript
 // GOOD: api-product-e2e tests product queries
 it('should list products with category filter', async () => {
-  const result = await gql(`query { products(category: "Electronics") { id name } }`);
+  const result = await gql(
+    `query { products(category: "Electronics") { id name } }`
+  );
   expect(result.data.products.length).toBeGreaterThan(0);
 });
 
