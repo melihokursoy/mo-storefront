@@ -13,6 +13,56 @@ permissions:
 jobs:
   main:
     runs-on: ubuntu-latest
+    env:
+      # Prisma database URLs for e2e tests
+      DATABASE_URL_PRODUCT: postgresql://postgres:postgres@localhost:5432/product_db
+      DATABASE_URL_CART: postgresql://postgres:postgres@localhost:5433/cart_db
+      DATABASE_URL_ORDER: postgresql://postgres:postgres@localhost:5434/order_db
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/product_db
+
+    services:
+      postgres-product:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: product_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      postgres-cart:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: cart_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5433:5432
+
+      postgres-order:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: order_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5434:5432
+
     steps:
       - uses: actions/checkout@v4
         with:
