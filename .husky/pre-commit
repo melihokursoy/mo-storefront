@@ -1,5 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npx nx format:write 
+npx nx format:write
+git add -A
 npx nx run-many -t lint test typecheck
