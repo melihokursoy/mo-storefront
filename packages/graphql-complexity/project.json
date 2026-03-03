@@ -1,0 +1,14 @@
+{
+  "projectType": "library",
+  "name": "@org/graphql-complexity",
+  "sourceRoot": "packages/graphql-complexity/src",
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit",
+        "cwd": "packages/graphql-complexity"
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+name: mo-storefront
+
+services:
+  db-product:
+    image: postgres:16-alpine
+    container_name: mo-db-product
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: product_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - product-data:/var/lib/postgresql/data
+
+volumes:
+  product-data:

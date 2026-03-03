@@ -1,0 +1,17 @@
+name: mo-storefront
+
+services:
+  db-cart:
+    image: postgres:16-alpine
+    container_name: mo-db-cart
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cart_db
+    ports:
+      - '5433:5432'
+    volumes:
+      - cart-data:/var/lib/postgresql/data
+
+volumes:
+  cart-data:

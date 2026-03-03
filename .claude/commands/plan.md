@@ -32,7 +32,7 @@ Read the plan.md if there is already one created and iterate on that
 
 ## Step 4. Ask questions
 
-. ask questions iteratively when you cannot decide with options eash to chose from like A,B or type your advice.
+Aask questions iteratively when you cannot decide with options each to chose from like A,B and one open end option lets user decide.
 
 ## Step 5. Draft the plan content
 

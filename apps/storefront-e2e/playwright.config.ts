@@ -28,6 +28,7 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: true,
     cwd: workspaceRoot,
+    timeout: 120_000,
   },
   projects: [
     {

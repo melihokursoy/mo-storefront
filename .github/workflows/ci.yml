@@ -13,6 +13,16 @@ permissions:
 jobs:
   main:
     runs-on: ubuntu-latest
+    env:
+      # Prisma database URLs for e2e tests (each subgraph manages its own database via docker-compose)
+      DATABASE_URL_PRODUCT: postgresql://postgres:postgres@localhost:5432/product_db
+      DATABASE_URL_CART: postgresql://postgres:postgres@localhost:5433/cart_db
+      DATABASE_URL_ORDER: postgresql://postgres:postgres@localhost:5434/order_db
+      # Disable Node inspector in CI to avoid port conflicts when running tests in parallel
+      NODE_OPTIONS: --no-warnings
+      # Allow built services to resolve workspace packages from root node_modules
+      NODE_PATH: /home/runner/work/mo-storefront/mo-storefront/node_modules
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,5 +37,8 @@ jobs:
 
       - run: npm i
       - run: npx playwright install --with-deps
+      - run: npm run db:generate:product && npm run db:generate:cart && npm run db:generate:order
+      - run: npx nx build @org/graphql-complexity
+      - run: mkdir -p dist/packages && ln -s ../../packages/graphql-complexity dist/packages/graphql-complexity
       - run: npx nx format:check --base="remotes/origin/main"
       - run: npx nx run-many -t lint test typecheck build e2e

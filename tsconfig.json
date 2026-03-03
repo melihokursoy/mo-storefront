@@ -8,6 +8,33 @@
     },
     {
       "path": "./apps/storefront"
+    },
+    {
+      "path": "./apps/api-gateway-e2e"
+    },
+    {
+      "path": "./apps/api-gateway"
+    },
+    {
+      "path": "./apps/api-product-e2e"
+    },
+    {
+      "path": "./apps/api-product"
+    },
+    {
+      "path": "./apps/api-cart-e2e"
+    },
+    {
+      "path": "./apps/api-cart"
+    },
+    {
+      "path": "./apps/api-order-e2e"
+    },
+    {
+      "path": "./apps/api-order"
+    },
+    {
+      "path": "./packages/graphql-complexity"
     }
   ]
 }

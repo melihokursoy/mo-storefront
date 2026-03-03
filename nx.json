@@ -36,9 +36,33 @@
       "options": {
         "targetName": "e2e"
       }
+    },
+    {
+      "plugin": "@nx/webpack/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps",
+        "serveStaticTargetName": "serve-static"
+      }
     }
   ],
   "neverConnectToCloud": true,
+  "targetDefaults": {
+    "serve": {
+      "continuous": true
+    },
+    "build": {
+      "dependsOn": [
+        {
+          "projects": ["@org/graphql-complexity"],
+          "target": "build"
+        }
+      ]
+    }
+  },
   "generators": {
     "@nx/next": {
       "application": {
