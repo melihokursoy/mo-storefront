@@ -53,6 +53,14 @@
   "targetDefaults": {
     "serve": {
       "continuous": true
+    },
+    "build": {
+      "dependsOn": [
+        {
+          "projects": ["@org/graphql-complexity"],
+          "target": "build"
+        }
+      ]
     }
   },
   "generators": {
