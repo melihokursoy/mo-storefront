@@ -22,9 +22,14 @@ module.exports = async function () {
 
   // Step 1: Set up databases (docker containers, migrations, seed data)
   try {
-    console.log('  Starting database containers...');
-    execSync('npm run db:up', { stdio: 'inherit', cwd: process.cwd() });
-    console.log('  ✓ Database containers started\n');
+    // In CI, databases are already running as service containers; skip db:up
+    if (!process.env.CI && !process.env.GITHUB_ACTIONS) {
+      console.log('  Starting database containers...');
+      execSync('npm run db:up', { stdio: 'inherit', cwd: process.cwd() });
+      console.log('  ✓ Database containers started\n');
+    } else {
+      console.log('  Skipping db:up (CI environment detected, services already running)\n');
+    }
 
     console.log('  Generating Prisma clients...');
     execSync('npm run db:generate', { stdio: 'inherit', cwd: process.cwd() });
