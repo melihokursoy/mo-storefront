@@ -39,5 +39,6 @@ jobs:
       - run: npx playwright install --with-deps
       - run: npm run db:generate:product && npm run db:generate:cart && npm run db:generate:order
       - run: npx nx build @org/graphql-complexity
+      - run: mkdir -p dist/packages && ln -s ../../packages/graphql-complexity dist/packages/graphql-complexity
       - run: npx nx format:check --base="remotes/origin/main"
       - run: npx nx run-many -t lint test typecheck build e2e
