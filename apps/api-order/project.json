@@ -32,6 +32,14 @@
           "target": "db:setup"
         }
       ]
+    },
+    "build": {
+      "dependsOn": [
+        {
+          "projects": ["@org/graphql-complexity"],
+          "target": "build"
+        }
+      ]
     }
   }
 }

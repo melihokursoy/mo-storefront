@@ -3,6 +3,14 @@
   "sourceRoot": "apps/api-gateway/src",
   "prefix": "org",
   "targets": {
+    "build": {
+      "dependsOn": [
+        {
+          "projects": ["@org/graphql-complexity"],
+          "target": "build"
+        }
+      ]
+    },
     "serve": {
       "dependsOn": [
         {
