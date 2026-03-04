@@ -7,6 +7,9 @@
     "targets": {
       "build": {
         "executor": "nx:run-commands",
+        "outputs": [
+          "{projectRoot}/dist"
+        ],
         "options": {
           "command": "webpack-cli build",
           "args": [
@@ -56,49 +59,12 @@
         ],
         "executor": "nx:noop"
       },
-      "db:generate": {
-        "executor": "nx:run-commands",
-        "options": {
-          "command": "cd apps/api-auth && npx prisma generate --schema=prisma/schema.prisma && cd ../.."
-        }
-      },
-      "db:migrate": {
-        "executor": "nx:run-commands",
-        "options": {
-          "command": "cd apps/api-auth && npx prisma migrate dev --schema=prisma/schema.prisma && cd ../.."
-        }
-      },
-      "db:seed": {
-        "executor": "nx:run-commands",
-        "options": {
-          "command": "cd apps/api-auth && npx tsx prisma/seed.ts && cd ../.."
-        }
-      },
-      "db:setup": {
-        "executor": "nx:run-commands",
-        "options": {
-          "command": "cd apps/api-auth && docker compose up -d && until pg_isready -h localhost -p 5435 -U postgres; do sleep 1; done && npx prisma generate --schema=prisma/schema.prisma && npx prisma migrate dev --config=prisma/prisma.config.ts && npx tsx prisma/seed.ts"
-        }
-      },
-      "typecheck": {
-        "executor": "nx:run-commands",
-        "options": {
-          "command": "tsc --build --emitDeclarationOnly",
-          "cwd": "apps/api-auth"
-        }
-      },
       "serve": {
         "continuous": true,
         "executor": "@nx/js:node",
         "defaultConfiguration": "development",
         "dependsOn": [
-          "build",
-          {
-            "projects": [
-              "api-auth"
-            ],
-            "target": "db:setup"
-          }
+          "build"
         ],
         "options": {
           "buildTarget": "api-auth:build",
@@ -119,11 +85,14 @@
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
+    "@prisma/adapter-pg": "^7.4.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0"
   },
+  "scripts": {},
   "devDependencies": {
-    "@nestjs/testing": "^11.0.0"
+    "@nestjs/testing": "^11.0.0",
+    "@types/pg": "^8.18.0"
   }
 }

@@ -3,6 +3,9 @@
   "name": "@org/graphql-complexity",
   "sourceRoot": "packages/graphql-complexity/src",
   "targets": {
+    "build": {
+      "outputs": ["{projectRoot}/dist/src"]
+    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {

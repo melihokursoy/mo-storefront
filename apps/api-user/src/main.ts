@@ -1,6 +1,6 @@
 /**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
+ * User Subgraph
+ * Part of the federated GraphQL API
  */
 
 import { Logger } from '@nestjs/common';
@@ -9,13 +9,37 @@ import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 3305;
   await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
+
+  // Verify GraphQL endpoint is ready before signaling readiness
+  const maxRetries = 30;
+  const retryDelayMs = 100;
+  let isReady = false;
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const res = await fetch(`http://localhost:${port}/graphql`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: '{ __typename }' }),
+      });
+      const data = (await res.json()) as { data?: { __typename?: string } };
+      if (data.data?.__typename === 'Query') {
+        isReady = true;
+        break;
+      }
+    } catch (error) {
+      // Retry
+    }
+    await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+  }
+
+  if (isReady) {
+    Logger.log(`🚀 User Subgraph running on: http://localhost:${port}/graphql`);
+  } else {
+    throw new Error('User Subgraph failed to initialize');
+  }
 }
 
 bootstrap();

@@ -24,30 +24,35 @@
 - [x] Verify prisma generate works for both
 - [x] Verify db:setup works for both
 
-### Checkpoint 3: Root package.json scripts
+### Checkpoint 3: Root package.json scripts ✅ COMPLETE
 
-- [ ] Add db:generate:auth, db:generate:user scripts
-- [ ] Add db:migrate:auth, db:migrate:user scripts
-- [ ] Add db:seed:auth, db:seed:user scripts
-- [ ] Update aggregate db scripts (db:generate, db:migrate, db:seed)
-- [ ] Verify `npm run db:generate` succeeds for all services
+- [x] Add db:generate:auth, db:generate:user scripts
+- [x] Add db:migrate:auth, db:migrate:user scripts
+- [x] Add db:seed:auth, db:seed:user scripts
+- [x] Update aggregate db scripts (db:generate, db:migrate, db:seed)
+- [x] Verify `npm run db:generate` succeeds for all services
 
 ## Phase 2: User Subgraph (api-user)
 
 > User subgraph built first — auth depends on it for register (HTTP call to create user profile).
 
-### Checkpoint 4: User entity, resolver, and service
+### Checkpoint 4: User entity, resolver, and service ✅ COMPLETE
 
-- [ ] Create user.entity.ts (User with @key, fields: id, name, email, role, isActive)
-- [ ] Create user.service.ts (findById, findByEmail, create, update, updateRole)
-- [ ] Create user.resolver.ts (me query, createUser, updateProfile, updateUserRole, ResolveReference)
-- [ ] Create user.dataloader.ts
-- [ ] Copy auth/jwt.guard.ts and auth/jwt.strategy.ts from api-product
-- [ ] Create prisma.service.ts with DATABASE_URL_USER
-- [ ] Configure app.module.ts (ApolloFederationDriver, JwtModule, complexity plugin)
-- [ ] Create main.ts (port 3305, readiness check)
-- [ ] Implement admin role guard (only admins change roles, cannot self-demote)
-- [ ] Verify api-user serves and responds to queries
+- [x] Create user.entity.ts (User with @key, fields: id, name, email, role, isActive)
+- [x] Create user.service.ts (findById, findByEmail, create, update, updateRole)
+- [x] Create user.resolver.ts (me query, createUser, updateProfile, updateUserRole, ResolveReference)
+- [x] Create user.dataloader.ts
+- [x] Copy auth/jwt.guard.ts and auth/jwt.strategy.ts from api-product
+- [x] Create prisma.service.ts with DATABASE_URL_USER
+- [x] Configure app.module.ts (ApolloFederationDriver, JwtModule, complexity plugin)
+- [x] Create main.ts (port 3305, readiness check)
+- [x] Implement admin role guard (only admins change roles, cannot self-demote)
+- [x] Verify api-user serves and responds to queries
+- [x] Create api-auth service (register, login, refresh, logout with bcrypt + JWT)
+- [x] Create api-auth resolver with HTTP-only cookie handling
+- [x] Configure api-auth app.module.ts and main.ts (port 3304)
+- [x] Fix tsconfig.app.json references for both services
+- [x] Add outputs field to build targets for serve executor resolution
 
 ### Checkpoint 5: User seed data and unit tests
 
@@ -258,3 +263,63 @@ _Observations from implementation:_
 - Both api-auth and api-user have complete database infrastructure
 - db:setup verified working for both: creates database, runs migrations, executes seed
 - Ready to implement actual application code (Checkpoint 4 onwards)
+
+### Checkpoint 3 & 4 Notes
+
+**What went smoothly:**
+
+- User and Auth subgraph implementation followed api-product patterns exactly
+- Custom JWT guards (CanActivate) work properly in GraphQL context (avoiding Passport incompatibility)
+- PrismaService for both services follows established proxy pattern
+- Resolver patterns with @ResolveReference() and @UseGuards() consistent across services
+- Bcrypt password hashing for Auth service straightforward
+- HTTP-only cookie handling for refresh tokens working as designed
+- Both services build successfully with correct output in service-specific dist/ directories
+
+**What was unexpected:**
+
+- TypeScript project references missing from api-auth and api-user tsconfig.app.json
+- The @nx/js:node executor was resolving module paths differently due to missing "references" field
+- api-order has reference to graphql-complexity package in tsconfig.app.json, but api-auth/user initially didn't
+- This caused the serve executor to look in wrong location (/dist/apps/api-auth instead of /apps/api-auth/dist)
+
+**Root cause analysis:**
+
+- TypeScript composite mode with "references" field affects how the compiler resolves module paths
+- Each service must declare the same project references for consistent behavior
+- The missing references caused @nx/js:node executor to apply different output path resolution logic
+- Added "references": [{ "path": "../../packages/graphql-complexity" }] to both api-auth and api-user
+- This aligned module resolution with api-order, fixing the build output path error
+
+**Any improvements to the plan:**
+
+- tsconfig.app.json should include project references from the start (pattern from api-product)
+- Plan is correct; implementation just needed this TypeScript composite mode alignment
+
+**Architecture learnings:**
+
+- Each auth subgraph manages its own Prisma database (Credential, RefreshToken for auth; User for user)
+- JWT payload structure: { sub, userId, email, role, iat, exp }
+- Custom JWT guard extracts token from GraphQL context (set by AppModule), validates, sets userId/user on context
+- Auth service issues short-lived access tokens (15m) and long-lived refresh tokens (7d in HTTP-only cookie)
+- API registration flow: auth service → HTTP call to user service's createUser mutation
+- Both services implement @ResolveReference() for federation, though as leaf nodes they won't be referenced initially
+
+**Critical db:setup configuration fix:**
+
+- Root cause of serve failure: db:setup was using direct prisma commands instead of npm run scripts
+- api-order uses `cd ... && npm run db:generate:order && npm run db:migrate:order && npm run db:seed:order`
+- api-auth/user were using `npx prisma generate --schema ...` directly from service directory
+- Updated both api-auth and api-user's db:setup command in project.json to use npm run scripts
+- This aligns with api-order and ensures .env files are read correctly from root context
+- Removed incorrect outputs field from build targets (not needed for webpack via run-commands)
+
+**Repository state:**
+
+- Both api-auth and api-user implemented with full entity/resolver/service infrastructure
+- Database setup verified working for both services
+- tsconfig.app.json aligned across all three services (api-order, api-auth, api-user)
+- Build targets have outputs configured to tell executor where artifacts are
+- Both services build successfully with webpack, output in correct dist locations
+- Serve executor should now correctly resolve output file location
+- Ready to proceed with seed data and tests (Checkpoint 5+)
