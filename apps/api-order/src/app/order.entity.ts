@@ -6,6 +6,7 @@ import {
   Directive,
   registerEnumType,
 } from '@nestjs/graphql';
+import { User } from './user.entity';
 
 export enum OrderStatus {
   PENDING = 'PENDING',
@@ -68,6 +69,9 @@ export class Order {
 
   @Field()
   userId!: string;
+
+  @Field(() => User, { nullable: true })
+  user?: User;
 
   @Field(() => OrderCart, { nullable: true })
   cart?: OrderCart;

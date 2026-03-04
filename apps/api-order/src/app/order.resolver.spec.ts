@@ -281,4 +281,12 @@ describe('OrderResolver', () => {
       expect(result).toBeNull();
     });
   });
+
+  describe('user field resolver', () => {
+    it('should return User stub with __typename and userId', () => {
+      const mockOrder = { id: 'order-1', userId: 'user-123' };
+      const result = resolver.user(mockOrder as any);
+      expect(result).toEqual({ __typename: 'User', id: 'user-123' });
+    });
+  });
 });

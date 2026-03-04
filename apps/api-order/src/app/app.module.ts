@@ -16,6 +16,7 @@ import { OrderResolver } from './order.resolver';
 import { OrderService } from './order.service';
 import { OrderDataLoader } from './order.dataloader';
 import { Order } from './order.entity';
+import { User } from './user.entity';
 import { PrismaService } from './prisma.service';
 import { JwtStrategy } from './auth/jwt.strategy';
 
@@ -27,7 +28,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
         federation: 2,
       },
       buildSchemaOptions: {
-        orphanedTypes: [Order],
+        orphanedTypes: [Order, User],
       },
       context: ({ req, res }: { req: any; res: any }) => {
         // Extract JWT token from Authorization header

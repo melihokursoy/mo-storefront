@@ -4,10 +4,13 @@ import {
   Mutation,
   Args,
   ResolveReference,
+  ResolveField,
   Context,
+  Parent,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { Order, OrderStatus, OrderItem } from './order.entity';
+import { User } from './user.entity';
 import { OrderService } from './order.service';
 import { JwtAuthGuard } from './auth/jwt.guard';
 
@@ -73,6 +76,11 @@ export class OrderResolver {
   @ResolveReference()
   resolveReference(reference: { id: string }): Promise<Order | null> {
     return this.orderService.findById(reference.id);
+  }
+
+  @ResolveField(() => User)
+  user(@Parent() order: Order): { __typename: string; id: string } {
+    return { __typename: 'User', id: order.userId };
   }
 }
 
