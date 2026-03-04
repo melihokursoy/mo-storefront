@@ -13,9 +13,16 @@ This directory contains project-specific rules that guide Claude Code developmen
 - **[git-workflow.md](git-workflow.md)** - Commit messages, branch naming, PR conventions
 - **[checkpoint-workflow.md](checkpoint-workflow.md)** - Checkpoint completion, todos.md updates, review notes
 
-### Feature-Specific
+### GraphQL API + NestJS (Battle-Proven Patterns)
 
-- **[graphql-api.md](graphql-api.md)** - Apollo Federation v2, NestJS, entity references, DataLoader patterns
+- **[nestjs-graphql-patterns.md](nestjs-graphql-patterns.md)** - Module setup, JWT guards, resolvers, field resolvers (Apollo Federation v2)
+- **[prisma-multi-db.md](prisma-multi-db.md)** - One database per service, PrismaService, migrations, seeding patterns
+- **[graphql-federation-implementation.md](graphql-federation-implementation.md)** - `@key`, `@external`, `@requires` directives, entity references, cross-subgraph queries
+- **[nestjs-testing-patterns.md](nestjs-testing-patterns.md)** - Mocking PrismaService, unit tests, E2E tests with helpers, cookie handling
+- **[graphql-api.md](graphql-api.md)** - _(Reference)_ Entity references, DataLoader, JWT auth, port management
+
+### Other
+
 - **[typescript.md](typescript.md)** - Type safety, tsconfig overrides, path aliases
 
 ### Code Quality

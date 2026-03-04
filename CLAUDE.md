@@ -368,6 +368,8 @@ npx shadcn@latest add <component-name>
 - `apps/api-product` (Port 3301) - Product catalog queries
 - `apps/api-cart` (Port 3302) - Cart management
 - `apps/api-order` (Port 3303) - Order processing
+- `apps/api-auth` (Port 3304) - Authentication & JWT tokens
+- `apps/api-user` (Port 3305) - User profiles & roles
 
 **Features**:
 
@@ -375,8 +377,19 @@ npx shadcn@latest add <component-name>
 - JWT authentication across all services
 - DataLoader for N+1 query prevention
 - Entity references across subgraphs via federation directives
+- HTTP-only cookies for refresh tokens
+- User profiles with role-based access control
 
-**Implementation**: Follow checkpoint plan in `_specs/graphql-api/plan.md`
+**Battle-Proven Patterns**: Before implementing, review these rules:
+
+- **[`.claude/rules/nestjs-graphql-patterns.md`](.claude/rules/nestjs-graphql-patterns.md)** — GraphQL module setup, JWT guards, resolver patterns
+- **[`.claude/rules/prisma-multi-db.md`](.claude/rules/prisma-multi-db.md)** — One database per service, PrismaService, migrations
+- **[`.claude/rules/graphql-federation-implementation.md`](.claude/rules/graphql-federation-implementation.md)** — Federation directives, entity references, cross-subgraph queries
+- **[`.claude/rules/nestjs-testing-patterns.md`](.claude/rules/nestjs-testing-patterns.md)** — Unit tests, E2E tests, mocking strategies
+
+These rules are extracted from the existing `api-product` service and proven across all subgraphs.
+
+**Implementation**: Follow checkpoint plan in `_specs/auth-user-subgraphs/plan.md` and `_specs/graphql-api/plan.md`
 
 ## GitHub Actions CI
 
