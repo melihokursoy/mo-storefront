@@ -6,11 +6,23 @@
     "serve": {
       "dependsOn": [
         {
-          "projects": ["api-product", "api-cart", "api-order"],
+          "projects": [
+            "api-product",
+            "api-cart",
+            "api-order",
+            "api-user",
+            "api-auth"
+          ],
           "target": "serve"
         }
       ]
     }
   },
-  "implicitDependencies": ["api-product", "api-cart", "api-order"]
+  "implicitDependencies": [
+    "api-product",
+    "api-cart",
+    "api-order",
+    "api-user",
+    "api-auth"
+  ]
 }

@@ -108,13 +108,13 @@
 
 ## Phase 4: Gateway Integration
 
-### Checkpoint 8: Register new subgraphs in gateway
+### Checkpoint 8: Register new subgraphs in gateway ✅ COMPLETE
 
-- [ ] Add auth + user to IntrospectAndCompose subgraphs in app.module.ts
-- [ ] Add auth + user to waitForSubgraphs() in main.ts
-- [ ] Update project.json: add api-auth, api-user dependencies (api-user before api-auth)
-- [ ] Forward cookie header in AuthenticatedDataSource
-- [ ] Verify gateway starts with all 5 subgraphs
+- [x] Add auth + user to IntrospectAndCompose subgraphs in app.module.ts
+- [x] Add auth + user to waitForSubgraphs() in main.ts
+- [x] Update project.json: add api-auth, api-user dependencies (api-user before api-auth)
+- [x] Forward cookie header in AuthenticatedDataSource
+- [x] Verify gateway starts with all 5 subgraphs
 
 ## Phase 5: Federation — User Entity References
 
@@ -509,3 +509,41 @@ _Observations from implementation:_
 - jest.config.ts configured and working for both api-auth and api-user
 - Both services ready for E2E testing (Checkpoint 10+)
 - Ready to proceed with Checkpoint 8 (Gateway integration)
+
+### Checkpoint 8 Notes
+
+**What went smoothly:**
+
+- Gateway IntrospectAndCompose subgraph registration straightforward - just add name + URL pairs
+- AuthenticatedDataSource cookie header forwarding integrated seamlessly
+- Project.json dependency configuration (dependsOn + implicitDependencies) works as expected
+- TypeScript compilation passes for gateway and all dependent services
+
+**What was unexpected:**
+
+- None - integration pattern is straightforward, follows established GraphQL federation approach
+
+**Any improvements to the plan:**
+
+- Plan was correct and complete for Checkpoint 8
+- Execution went smoothly with no rework needed
+
+**Gateway integration learnings:**
+
+- All 5 subgraphs now in IntrospectAndCompose: product (3301), cart (3302), order (3303), auth (3304), user (3305)
+- AuthenticatedDataSource forwards both Authorization header and cookies to all subgraphs
+- Gateway's waitForSubgraphs() waits for all services to be healthy before starting (prevents startup race conditions)
+- Project.json dependsOn ensures all 5 services start before gateway in development mode
+
+**Critical implementation details:**
+
+- Cookie header forwarding: `request.http.headers.set('cookie', context.req.headers.cookie)`
+- Auth and user subgraphs added to Nx project dependencies to ensure they start with gateway
+- All services use IntrospectAndCompose for dynamic schema composition (no manual supergraph configuration needed)
+
+**Repository state:**
+
+- Gateway fully configured with all 5 subgraphs
+- AuthenticatedDataSource properly forwards auth headers and cookies
+- TypeScript compilation verified for all services
+- Ready to proceed with user entity references in cart + order (Checkpoint 9)
