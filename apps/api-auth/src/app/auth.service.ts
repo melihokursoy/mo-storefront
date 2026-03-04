@@ -32,15 +32,7 @@ export class AuthService {
       throw new BadRequestException('Email already registered');
     }
 
-    // Hash password
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    // Create credential
-    const credential = await this.prisma.credential.create({
-      data: { email, passwordHash },
-    });
-
-    // Create user via HTTP call to api-user
+    // Create user via HTTP call to api-user first
     let userId: string;
     try {
       const userResponse = await fetch('http://localhost:3305/graphql', {
@@ -63,17 +55,21 @@ export class AuthService {
       };
 
       if (userResult.errors || !userResult.data?.createUser?.id) {
-        // Rollback: delete credential if user creation failed
-        await this.prisma.credential.delete({ where: { id: credential.id } });
         throw new BadRequestException('Failed to create user profile');
       }
 
       userId = userResult.data.createUser.id;
     } catch (error) {
-      // Rollback: delete credential if user creation failed
-      await this.prisma.credential.delete({ where: { id: credential.id } });
       throw error;
     }
+
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Create credential with userId
+    const credential = await this.prisma.credential.create({
+      data: { email, passwordHash, userId },
+    });
 
     // Generate tokens
     const accessToken = this.jwtService.sign({
@@ -117,35 +113,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    // Fetch user to get userId (from user subgraph)
-    let userId: string;
-    try {
-      const userResponse = await fetch('http://localhost:3305/graphql', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: `
-            query GetUserByEmail($email: String!) {
-              users(email: $email) {
-                id
-              }
-            }
-          `,
-          variables: { email },
-        }),
-      });
-      const userResult = (await userResponse.json()) as {
-        data?: { users?: Array<{ id: string }> };
-      };
-
-      if (!userResult.data?.users?.[0]?.id) {
-        throw new UnauthorizedException('User profile not found');
-      }
-
-      userId = userResult.data.users[0].id;
-    } catch (error) {
-      throw new UnauthorizedException('Failed to fetch user profile');
-    }
+    // Get userId from credential
+    const userId = credential.userId;
 
     // Generate tokens
     const accessToken = this.jwtService.sign({
@@ -194,35 +163,8 @@ export class AuthService {
 
     const credential = tokenRecord.credential;
 
-    // Fetch user to get userId
-    let userId: string;
-    try {
-      const userResponse = await fetch('http://localhost:3305/graphql', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: `
-            query GetUserByEmail($email: String!) {
-              users(email: $email) {
-                id
-              }
-            }
-          `,
-          variables: { email: credential.email },
-        }),
-      });
-      const userResult = (await userResponse.json()) as {
-        data?: { users?: Array<{ id: string }> };
-      };
-
-      if (!userResult.data?.users?.[0]?.id) {
-        throw new UnauthorizedException('User profile not found');
-      }
-
-      userId = userResult.data.users[0].id;
-    } catch (error) {
-      throw new UnauthorizedException('Failed to fetch user profile');
-    }
+    // Get userId from credential
+    const userId = credential.userId;
 
     // Revoke old token
     await this.prisma.refreshToken.update({

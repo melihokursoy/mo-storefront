@@ -11,6 +11,7 @@ model Credential {
   id            String   @id @default(uuid())
   email         String   @unique
   passwordHash  String
+  userId        String   @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   refreshTokens RefreshToken[]
