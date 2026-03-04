@@ -1,0 +1,17 @@
+name: mo-storefront
+
+services:
+  db-auth:
+    image: postgres:16-alpine
+    container_name: mo-db-auth
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auth_db
+    ports:
+      - '5435:5432'
+    volumes:
+      - auth-data:/var/lib/postgresql/data
+
+volumes:
+  auth-data:

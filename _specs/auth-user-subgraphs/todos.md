@@ -2,17 +2,17 @@
 
 ## Phase 1: Infrastructure
 
-### Checkpoint 1: Install dependencies and generate apps
+### Checkpoint 1: Install dependencies and generate apps ✅ COMPLETE
 
-- [ ] Install bcrypt, cookie-parser, @types/bcrypt, @types/cookie-parser
-- [ ] Generate api-auth with `@nx/nest:app`
-- [ ] Generate api-user with `@nx/nest:app`
-- [ ] Create webpack.config.js for both (copy from api-product)
-- [ ] Create tsconfig.json / tsconfig.app.json for both
-- [ ] Create .env files (DATABASE_URL_AUTH port 5435, DATABASE_URL_USER port 5436, debug ports 9504/9505)
-- [ ] Create docker-compose.yml for both (auth_db, user_db)
-- [ ] Create project.json targets (db:generate, db:migrate, db:seed, db:setup, serve)
-- [ ] Verify both apps build
+- [x] Install bcrypt, cookie-parser, @types/bcrypt, @types/cookie-parser
+- [x] Generate api-auth with `@nx/nest:app`
+- [x] Generate api-user with `@nx/nest:app`
+- [x] Create webpack.config.js for both (copy from api-product)
+- [x] Create tsconfig.json / tsconfig.app.json for both
+- [x] Create .env files (DATABASE_URL_AUTH port 5435, DATABASE_URL_USER port 5436, debug ports 9504/9505)
+- [x] Create docker-compose.yml for both (auth_db, user_db)
+- [x] Create project.json targets (db:generate, db:migrate, db:seed, db:setup, serve)
+- [x] Verify both apps build
 
 ### Checkpoint 2: Prisma setup for both services
 
@@ -200,8 +200,27 @@
 
 _Observations from implementation:_
 
-- [ ] What went smoothly?
-- [ ] What was unexpected?
-- [ ] Any improvements to the plan?
-- [ ] Federation-specific challenges?
-- [ ] Performance improvements?
+### Checkpoint 1 Notes
+
+**What went smoothly:**
+
+- Nx app generator created both projects with all scaffolding (main.ts, app.module.ts, webpack.config.js, tsconfig files)
+- Nx also automatically generated e2e projects, saving manual setup work
+- Dependency installation smooth (bcrypt, cookie-parser + types)
+- Package.json uses new "nx" field format (not project.json files)
+
+**What was unexpected:**
+
+- New Nx version doesn't generate project.json files; configuration is in package.json under "nx" field
+- Needed to manually add database targets (db:generate, db:migrate, db:seed, db:setup) to package.json
+
+**Any improvements to the plan:**
+
+- Plan assumed project.json files would exist; updated to use package.json nx config instead
+- Plan is correct overall; just implementation detail difference
+
+**Repository state:**
+
+- Both apps now build successfully
+- All infrastructure files in place (.env, docker-compose.yml, database scripts)
+- Ready to proceed with Prisma setup (Checkpoint 2)

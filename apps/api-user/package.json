@@ -1,0 +1,122 @@
+{
+  "name": "@org/api-user",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "api-user",
+    "targets": {
+      "build": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "webpack-cli build",
+          "args": [
+            "--node-env=production"
+          ],
+          "cwd": "apps/api-user"
+        },
+        "configurations": {
+          "development": {
+            "args": [
+              "--node-env=development"
+            ]
+          }
+        }
+      },
+      "prune-lockfile": {
+        "dependsOn": [
+          "build"
+        ],
+        "cache": true,
+        "executor": "@nx/js:prune-lockfile",
+        "outputs": [
+          "{workspaceRoot}/apps/api-user/dist/package.json",
+          "{workspaceRoot}/apps/api-user/dist/package-lock.json"
+        ],
+        "options": {
+          "buildTarget": "build"
+        }
+      },
+      "copy-workspace-modules": {
+        "dependsOn": [
+          "build"
+        ],
+        "cache": true,
+        "outputs": [
+          "{workspaceRoot}/apps/api-user/dist/workspace_modules"
+        ],
+        "executor": "@nx/js:copy-workspace-modules",
+        "options": {
+          "buildTarget": "build"
+        }
+      },
+      "prune": {
+        "dependsOn": [
+          "prune-lockfile",
+          "copy-workspace-modules"
+        ],
+        "executor": "nx:noop"
+      },
+      "db:generate": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "cd apps/api-user && npx prisma generate --schema=prisma/schema.prisma && cd ../.."
+        }
+      },
+      "db:migrate": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "cd apps/api-user && npx prisma migrate dev --schema=prisma/schema.prisma && cd ../.."
+        }
+      },
+      "db:seed": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "cd apps/api-user && npx tsx prisma/seed.ts && cd ../.."
+        }
+      },
+      "db:setup": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "cd apps/api-user && docker compose up -d && until pg_isready -h localhost -p 5436 -U postgres; do sleep 1; done && cd ../.. && npm run db:generate:user && npm run db:migrate:user && npm run db:seed:user"
+        }
+      },
+      "serve": {
+        "continuous": true,
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build",
+          {
+            "projects": [
+              "api-user"
+            ],
+            "target": "db:setup"
+          }
+        ],
+        "options": {
+          "buildTarget": "api-user:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "api-user:build:development"
+          },
+          "production": {
+            "buildTarget": "api-user:build:production"
+          }
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/platform-express": "^11.0.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^11.0.0"
+  }
+}
