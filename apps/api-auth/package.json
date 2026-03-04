@@ -77,7 +77,14 @@
       "db:setup": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "cd apps/api-auth && docker compose up -d && until pg_isready -h localhost -p 5435 -U postgres; do sleep 1; done && cd ../.. && npm run db:generate:auth && npm run db:migrate:auth && npm run db:seed:auth"
+          "command": "cd apps/api-auth && docker compose up -d && until pg_isready -h localhost -p 5435 -U postgres; do sleep 1; done && npx prisma generate --schema=prisma/schema.prisma && npx prisma migrate dev --config=prisma/prisma.config.ts && npx tsx prisma/seed.ts"
+        }
+      },
+      "typecheck": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "tsc --build --emitDeclarationOnly",
+          "cwd": "apps/api-auth"
         }
       },
       "serve": {

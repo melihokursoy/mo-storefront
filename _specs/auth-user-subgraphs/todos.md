@@ -14,14 +14,15 @@
 - [x] Create project.json targets (db:generate, db:migrate, db:seed, db:setup, serve)
 - [x] Verify both apps build
 
-### Checkpoint 2: Prisma setup for both services
+### Checkpoint 2: Prisma setup for both services ✅ COMPLETE
 
-- [ ] Create api-auth prisma schema (Credential, RefreshToken models)
-- [ ] Create api-user prisma schema (User model with role field)
-- [ ] Create prisma.config.ts for both
-- [ ] Run initial migrations for both
-- [ ] Create PrismaService for both (proxy pattern)
-- [ ] Verify prisma generate works for both
+- [x] Create api-auth prisma schema (Credential, RefreshToken models)
+- [x] Create api-user prisma schema (User model with role field)
+- [x] Create prisma.config.ts for both
+- [x] Run initial migrations for both
+- [x] Create PrismaService for both (proxy pattern)
+- [x] Verify prisma generate works for both
+- [x] Verify db:setup works for both
 
 ### Checkpoint 3: Root package.json scripts
 
@@ -224,3 +225,36 @@ _Observations from implementation:_
 - Both apps now build successfully
 - All infrastructure files in place (.env, docker-compose.yml, database scripts)
 - Ready to proceed with Prisma setup (Checkpoint 2)
+
+### Checkpoint 2 Notes
+
+**What went smoothly:**
+
+- Prisma schema definitions clear and well-structured (Credential/RefreshToken models for auth, User model for user)
+- PrismaService lifecycle management (OnModuleInit, OnModuleDestroy) follows established pattern from api-product
+- Prisma migrations generated and applied successfully for both services
+- Nx database targets (db:generate, db:migrate, db:seed, db:setup) work correctly with both services
+
+**What was unexpected:**
+
+- Prisma 7 requires datasource URL in prisma.config.ts instead of schema.prisma (discovered via error and fixed)
+- Api-product auto-discovers prisma.config.ts but api-auth/user need explicit --config flag in migrate command (not critical, works as intended)
+- Pre-commit hook initially failed because test targets were configured but no jest.config.ts existed (fixed by removing test targets)
+
+**Any improvements to the plan:**
+
+- Plan is correct; implementation details differ slightly from api-product but infrastructure is solid
+- Test targets should only be added when tests exist (prevents pre-commit failures)
+
+**Database setup insights:**
+
+- Each service manages its own .env file with service-specific DATABASE_URL environment variable
+- Docker containers start cleanly on db:setup, with health checks preventing race conditions
+- db:setup is entirely self-contained in Nx targets (no root npm scripts needed for new services)
+- Seed files are placeholders (data to be implemented in later checkpoints as planned)
+
+**Repository state:**
+
+- Both api-auth and api-user have complete database infrastructure
+- db:setup verified working for both: creates database, runs migrations, executes seed
+- Ready to implement actual application code (Checkpoint 4 onwards)
