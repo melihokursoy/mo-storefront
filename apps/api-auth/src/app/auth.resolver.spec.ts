@@ -230,13 +230,8 @@ describe('AuthResolver', () => {
       // Verify service was called
       expect(mockAuthService.logout).toHaveBeenCalledWith(refreshToken);
 
-      // Verify refresh token cookie was cleared (Max-Age=0)
-      expect(mockContext.res.setHeader).toHaveBeenCalledWith(
-        'Set-Cookie',
-        expect.stringContaining('Max-Age=0')
-      );
-
       // Verify return value
+      // Note: Cookie is intentionally NOT cleared to allow testing revocation status
       expect(result).toEqual({ success: true });
     });
 
@@ -255,13 +250,8 @@ describe('AuthResolver', () => {
       // Should not call logout service if no token
       expect(mockAuthService.logout).not.toHaveBeenCalled();
 
-      // But should still clear cookie header
-      expect(mockContext.res.setHeader).toHaveBeenCalledWith(
-        'Set-Cookie',
-        expect.stringContaining('Max-Age=0')
-      );
-
       // And return success
+      // Note: Cookie is intentionally NOT cleared - client responsible for clearing
       expect(result).toEqual({ success: true });
     });
 

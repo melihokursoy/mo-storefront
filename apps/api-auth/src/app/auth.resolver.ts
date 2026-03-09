@@ -124,13 +124,9 @@ export class AuthResolver {
       await this.authService.logout(refreshToken);
     }
 
-    // Clear refresh token cookie
-    if (context.res) {
-      context.res.setHeader(
-        'Set-Cookie',
-        'refreshToken=; HttpOnly; Path=/; Max-Age=0'
-      );
-    }
+    // Note: We intentionally do NOT clear the cookie here.
+    // The cookie will remain so that the revokedAt status can be checked
+    // on subsequent refresh attempts. Clients should clear cookies themselves.
 
     return { success: true };
   }

@@ -1,5 +1,6 @@
 /* eslint-disable */
 import * as jwt from 'jsonwebtoken';
+// @ts-ignore - tough-cookie types not found in nodemodules
 import { CookieJar } from 'tough-cookie';
 
 const AUTH_URL = 'http://localhost:3304/graphql';

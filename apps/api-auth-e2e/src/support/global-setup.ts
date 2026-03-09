@@ -31,7 +31,7 @@ module.exports = async function () {
         body: JSON.stringify({ query: '{ __typename }' }),
       });
       const data = (await res.json()) as { data?: { __typename?: string } };
-      if (data.data?.__typename === 'Mutation') {
+      if (data.data?.__typename === 'Query') {
         console.log('  ✓ Auth subgraph is ready');
         authReady = true;
         break;
