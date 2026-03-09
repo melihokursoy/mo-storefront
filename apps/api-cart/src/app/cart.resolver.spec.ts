@@ -242,4 +242,12 @@ describe('CartResolver', () => {
       expect(result).toBeNull();
     });
   });
+
+  describe('user field resolver', () => {
+    it('should return User stub with __typename and userId', () => {
+      const mockCart = { id: 'cart-1', userId: 'user-123' };
+      const result = resolver.user(mockCart as any);
+      expect(result).toEqual({ __typename: 'User', id: 'user-123' });
+    });
+  });
 });

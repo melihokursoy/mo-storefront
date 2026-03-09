@@ -13,6 +13,8 @@ async function waitForSubgraphs() {
     { name: 'product', url: 'http://localhost:3301/graphql' },
     { name: 'cart', url: 'http://localhost:3302/graphql' },
     { name: 'order', url: 'http://localhost:3303/graphql' },
+    { name: 'auth', url: 'http://localhost:3304/graphql' },
+    { name: 'user', url: 'http://localhost:3305/graphql' },
   ];
 
   const maxRetries = 60;

@@ -26,6 +26,11 @@ class AuthenticatedDataSource extends RemoteGraphQLDataSource {
         context.req.headers.authorization
       );
     }
+
+    // Forward cookies to subgraphs (for refresh tokens)
+    if (context.req?.headers?.cookie) {
+      request.http.headers.set('cookie', context.req.headers.cookie);
+    }
   }
 }
 
@@ -39,6 +44,8 @@ class AuthenticatedDataSource extends RemoteGraphQLDataSource {
             { name: 'product', url: 'http://localhost:3301/graphql' },
             { name: 'cart', url: 'http://localhost:3302/graphql' },
             { name: 'order', url: 'http://localhost:3303/graphql' },
+            { name: 'auth', url: 'http://localhost:3304/graphql' },
+            { name: 'user', url: 'http://localhost:3305/graphql' },
           ],
           pollIntervalInMs: 10000,
           subgraphHealthCheck: true,

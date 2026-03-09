@@ -35,6 +35,18 @@
     },
     {
       "path": "./packages/graphql-complexity"
+    },
+    {
+      "path": "./apps/api-auth-e2e"
+    },
+    {
+      "path": "./apps/api-auth"
+    },
+    {
+      "path": "./apps/api-user-e2e"
+    },
+    {
+      "path": "./apps/api-user"
     }
   ]
 }

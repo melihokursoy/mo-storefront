@@ -4,6 +4,8 @@ import { waitForPortOpen } from '@nx/node/utils';
 var __TEARDOWN_MESSAGE__: string;
 
 const SERVICES = [
+  { name: 'api-auth', port: 3304 },
+  { name: 'api-user', port: 3305 },
   { name: 'api-gateway', port: 3300 },
   { name: 'api-product', port: 3301 },
   { name: 'api-cart', port: 3302 },

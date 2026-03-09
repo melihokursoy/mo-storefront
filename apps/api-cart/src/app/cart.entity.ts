@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID, Float, Directive } from '@nestjs/graphql';
+import { User } from './user.entity';
 
 // Reference to Product from Product subgraph (nested in CartItem)
 @ObjectType()
@@ -36,6 +37,9 @@ export class Cart {
 
   @Field()
   userId!: string;
+
+  @Field(() => User, { nullable: true })
+  user?: User;
 
   @Field(() => [CartItem])
   items!: CartItem[];

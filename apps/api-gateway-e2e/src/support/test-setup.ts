@@ -35,8 +35,11 @@ async function gql(
 /**
  * Generate JWT token for authenticated tests
  */
-function makeToken(userId = 'user-1'): string {
-  return jwt.sign({ sub: userId, userId }, JWT_SECRET, { expiresIn: '1h' });
+function makeToken(userId = 'user-1', role = 'user'): string {
+  const email = userId === 'user-admin' ? 'admin@test.com' : 'user@test.com';
+  return jwt.sign({ sub: userId, userId, email, role }, JWT_SECRET, {
+    expiresIn: '1h',
+  });
 }
 
 module.exports = async function () {

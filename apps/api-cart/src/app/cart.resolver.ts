@@ -4,10 +4,13 @@ import {
   Mutation,
   Args,
   ResolveReference,
+  ResolveField,
   Context,
+  Parent,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { Cart } from './cart.entity';
+import { User } from './user.entity';
 import { CartService } from './cart.service';
 import { JwtAuthGuard } from './auth/jwt.guard';
 
@@ -76,5 +79,10 @@ export class CartResolver {
   @ResolveReference()
   resolveReference(reference: { id: string }): Promise<Cart | null> {
     return this.cartService.findById(reference.id);
+  }
+
+  @ResolveField(() => User)
+  user(@Parent() cart: Cart): { __typename: string; id: string } {
+    return { __typename: 'User', id: cart.userId };
   }
 }
