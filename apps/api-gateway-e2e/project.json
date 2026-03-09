@@ -5,7 +5,14 @@
       "executor": "@nx/jest:jest",
       "dependsOn": [
         {
-          "projects": ["api-gateway", "api-product", "api-cart", "api-order"],
+          "projects": [
+            "api-gateway",
+            "api-auth",
+            "api-user",
+            "api-product",
+            "api-cart",
+            "api-order"
+          ],
           "target": "serve"
         }
       ]

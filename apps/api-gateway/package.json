@@ -64,7 +64,12 @@
         "executor": "@nx/js:node",
         "defaultConfiguration": "development",
         "dependsOn": [
-          "build"
+          "build",
+          "api-auth:serve",
+          "api-user:serve",
+          "api-product:serve",
+          "api-cart:serve",
+          "api-order:serve"
         ],
         "options": {
           "buildTarget": "api-gateway:build",
