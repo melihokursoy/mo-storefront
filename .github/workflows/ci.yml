@@ -40,6 +40,9 @@ jobs:
       - run: npm i
       - run: npx playwright install --with-deps
 
+      # Generate Prisma clients for all subgraphs (required before typecheck)
+      - run: npm run db:generate
+
       # Code validation and tests
       - run: npx nx format:check --base="remotes/origin/main"
       - run: npx nx run-many -t lint test typecheck build
