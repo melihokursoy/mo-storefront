@@ -68,7 +68,8 @@
         ],
         "options": {
           "buildTarget": "api-user:build",
-          "runBuildTargetDependencies": false
+          "runBuildTargetDependencies": false,
+          "inspect": false
         },
         "configurations": {
           "development": {
